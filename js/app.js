@@ -69,7 +69,8 @@ const SCHEMAS = {
       {k:"signs",    l:"标语与文字", multi:true},
       {k:"size",     l:"尺寸与空间", multi:true},
       {k:"function", l:"功能"},
-      {k:"summary",  l:"通俗档案（叙述文）", multi:true},
+      {k:"summary_ext", l:"外部档案（叙述文）", multi:true},
+      {k:"summary_int", l:"内部档案（叙述文）", multi:true},
       {k:"img",      l:"概念图 URL"},
       {k:"note",     l:"备注", multi:true},
     ],
@@ -446,7 +447,8 @@ function buildingModal(b){
     <div class="m-table">
       ${rows.map(r=>`<div class="m-row"><div class="k">${r[0]}</div><div class="v">${esc(r[2]).replace(/\n/g,"<br>")}</div></div>`).join("")}
     </div>
-    ${b.summary?`<div class="m-summary"><div class="ms-label">📖 通俗档案</div>${esc(b.summary).replace(/\n/g,"<br>")}</div>`:""}
+    ${b.summary_ext?`<div class="m-summary"><div class="ms-label">📖 外部档案</div>${esc(b.summary_ext).replace(/\n/g,"<br>")}</div>`:""}
+    ${b.summary_int?`<div class="m-summary"><div class="ms-label">📖 内部档案</div>${esc(b.summary_int).replace(/\n/g,"<br>")}</div>`:""}
     ${b.note?`<div class="m-note">${esc(b.note).replace(/\n/g,"<br>")}</div>`:""}
   `);
 }
