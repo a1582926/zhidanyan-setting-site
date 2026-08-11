@@ -69,6 +69,8 @@ const SCHEMAS = {
       {k:"appearance",l:"外观设计", multi:true},
       {k:"signs",    l:"标语与文字", multi:true},
       {k:"size",     l:"尺寸与空间", multi:true},
+      {k:"levels",   l:"楼层结构", multi:true},
+      {k:"energy",   l:"能量来源", multi:true},
       {k:"function", l:"功能"},
       {k:"summary_ext", l:"外部档案（叙述文）", multi:true},
       {k:"summary_int", l:"内部档案（叙述文）", multi:true},
@@ -438,7 +440,8 @@ function renderBuildings(){
 function buildingModal(b){
   const rows = [
     ["位置","", b.location], ["材料","", b.material], ["外观设计","", b.appearance],
-    ["标语与文字","", b.signs], ["尺寸与空间","", b.size], ["功能","", b.function]
+    ["标语与文字","", b.signs], ["尺寸与空间","", b.size], ["楼层结构","", b.levels],
+    ["能量来源","", b.energy], ["功能","", b.function]
   ].filter(r=>r[2]);
   openModal(`
     <button class="modal-close">×</button>
