@@ -186,6 +186,14 @@ input,textarea,select{font-family:inherit}
   border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.9;color:var(--muted);
 }
 .m-note b{color:var(--text)}
+.m-summary{
+  margin-top:20px;padding:18px 20px;background:linear-gradient(135deg,rgba(155,123,255,.08),rgba(232,197,106,.05));
+  border:1px solid var(--border);border-radius:10px;font-size:14px;line-height:2.1;color:var(--text);
+}
+.m-summary .ms-label{
+  font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;
+  border-bottom:1px solid var(--border-soft);padding-bottom:8px;
+}
 
 /* ===== 编辑模式 ===== */
 body.editing .card{border-style:dashed;border-color:var(--purple)}
