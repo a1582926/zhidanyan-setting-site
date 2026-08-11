@@ -49,6 +49,7 @@ const SCHEMAS = {
       {k:"temp_avg",  l:"平均气温", unit:"开尔文"},
       {k:"temp_day",  l:"白日", unit:"开尔文"},
       {k:"temp_night",l:"夜晚", unit:"开尔文"},
+      {k:"gravity",   l:"重力", multi:true},
       {k:"surface",   l:"地表主要构成成分", multi:true},
       {k:"atmosphere",l:"大气成分", multi:true},
       {k:"magnet",    l:"磁场强度"},
@@ -364,7 +365,7 @@ function closeModal(){
 function planetModal(p){
   const rows = [
     ["宇宙坐标","", p.coords], ["直径","KM", p.diameter], ["平均气温","开尔文", p.temp_avg],
-    ["白日","开尔文", p.temp_day], ["夜晚","开尔文", p.temp_night],
+    ["白日","开尔文", p.temp_day], ["夜晚","开尔文", p.temp_night], ["重力","", p.gravity],
     ["地表构成","", p.surface], ["大气成分","", p.atmosphere], ["磁场强度","", p.magnet],
     ["地形地貌","", p.terrain]
   ].filter(r=>r[2]);
