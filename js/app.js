@@ -88,8 +88,11 @@ const SCHEMAS = {
       {k:"appearance", l:"外观", multi:true},
       {k:"principle",  l:"运行原理", multi:true},
       {k:"ability",    l:"能力参数", multi:true},
-      {k:"voice",      l:"声线特征"},
-      {k:"forms",      l:"形态变化", multi:true},
+      {k:"voice",   l:"声线特征"},
+      {k:"laws",    l:"核心法则", multi:true},
+      {k:"hidden_directive", l:"-1 隐藏指令", multi:true},
+      {k:"awakening", l:"觉醒轨迹", multi:true},
+      {k:"forms",   l:"形态变化", multi:true},
       {k:"note",       l:"备注", multi:true},
     ],
     empty: null
@@ -510,7 +513,11 @@ function renderTianshu(){
 function tianshuModal(t){
   const rows = [
     ["定位","", t.class], ["外观","", t.appearance], ["运行原理","", t.principle],
-    ["能力参数","", t.ability], ["声线特征","", t.voice], ["形态变化","", t.forms]
+    ["能力参数","", t.ability], ["声线特征","", t.voice],
+    ["核心法则","", t.laws],
+    ["⚠ -1 隐藏指令","", t.hidden_directive],
+    ["觉醒轨迹","", t.awakening],
+    ["形态变化","", t.forms]
   ].filter(r=>r[2]);
   openModal(`
     <button class="modal-close">×</button>
