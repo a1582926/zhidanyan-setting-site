@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《致：黯淡星》官方设定站</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#/">致：黯淡星<span class="logo-sub">SETTING ARCHIVE</span></a>
+    <div class="nav-links" id="navLinks">
+      <a href="#/planets" data-nav="planets">星球档案</a>
+      <a href="#/buildings" data-nav="buildings">建筑设施</a>
+      <a href="#/tianshu" data-nav="tianshu">天枢系统</a>
+      <a href="#/equipment" data-nav="equipment">装备</a>
+      <a href="#/production" data-nav="production">制作进度</a>
+    </div>
+    <div class="nav-actions">
+      <span class="edit-badge" id="editBadge" hidden>编辑中</span>
+      <button class="btn-edit" id="btnEdit">✎ 编辑</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== 页面容器 ===== -->
+<main id="app"></main>
+
+<!-- ===== 详情模态 ===== -->
+<div class="modal-mask" id="modalMask" hidden>
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- ===== 页脚 ===== -->
+<footer id="footer">
+  <div class="foot-inner">
+    <div class="foot-title">致：黯淡星</div>
+    <div class="foot-line">因为爱不是等待，是翻越。</div>
+    <div class="foot-meta" id="footMeta"></div>
+    <div class="foot-tip">本页面在编辑模式下修改后会自动保存到本机，导出 data.json 即可发布新版</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- 发布新版时把 v= 数字 +1（蕾姆维护），防止访客浏览器缓存旧数据 -->
+<script src="data/data.js?v=1"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
