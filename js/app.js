@@ -64,14 +64,15 @@ const SCHEMAS = {
     fields: [
       {k:"name",     l:"名称"},
       {k:"location", l:"位置"},
-      {k:"material", l:"建筑材料与样式", multi:true},
+      {k:"material", l:"建筑材料", multi:true},
+      {k:"appearance",l:"外观设计", multi:true},
       {k:"signs",    l:"标语与文字", multi:true},
       {k:"size",     l:"尺寸与空间", multi:true},
       {k:"function", l:"功能"},
       {k:"img",      l:"概念图 URL"},
       {k:"note",     l:"备注", multi:true},
     ],
-    empty: {id:"", name:"新建筑", location:"", material:"", signs:"", size:"", function:"", img:"",
+    empty: {id:"", name:"新建筑", location:"", material:"", appearance:"", signs:"", size:"", function:"", img:"",
             palette:["#8a8f98","#5c6068","#b8bdc8"], note:""}
   },
   tianshu: {
@@ -433,8 +434,8 @@ function renderBuildings(){
 }
 function buildingModal(b){
   const rows = [
-    ["位置","", b.location], ["材料与样式","", b.material], ["标语与文字","", b.signs],
-    ["尺寸与空间","", b.size], ["功能","", b.function]
+    ["位置","", b.location], ["材料","", b.material], ["外观设计","", b.appearance],
+    ["标语与文字","", b.signs], ["尺寸与空间","", b.size], ["功能","", b.function]
   ].filter(r=>r[2]);
   openModal(`
     <button class="modal-close">×</button>
