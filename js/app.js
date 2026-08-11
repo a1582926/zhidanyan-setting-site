@@ -87,6 +87,7 @@ const SCHEMAS = {
       {k:"class",      l:"定位"},
       {k:"appearance", l:"外观", multi:true},
       {k:"timeline",   l:"诞生时间线", multi:true},
+      {k:"structure",  l:"结构层次", multi:true},
       {k:"principle",  l:"运行原理", multi:true},
       {k:"ability",    l:"能力参数", multi:true},
       {k:"voice",   l:"声线特征"},
@@ -514,6 +515,7 @@ function renderTianshu(){
 function tianshuModal(t){
   const rows = [
     ["定位","", t.class], ["外观","", t.appearance], ["诞生时间线","", t.timeline],
+    ["结构层次","", t.structure],
     ["运行原理","", t.principle],
     ["能力参数","", t.ability], ["声线特征","", t.voice],
     ["核心法则","", t.laws],
