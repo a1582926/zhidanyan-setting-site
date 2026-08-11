@@ -148,6 +148,9 @@ input,textarea,select{font-family:inherit}
 }
 
 /* ===== 详情模态 ===== */
+/* ⚠️ 必须保留 [hidden] 规则：.modal-mask 的 display:flex 会覆盖 HTML hidden 属性
+   导致全屏遮罩常驻盖住页面（2026-08-11 线上事故根因） */
+.modal-mask[hidden]{display:none !important}
 .modal-mask{
   position:fixed;inset:0;background:rgba(4,6,10,.93); /* 同 nav：不用 backdrop-filter */
   z-index:200;display:flex;align-items:flex-start;justify-content:center;
