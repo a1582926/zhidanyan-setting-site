@@ -37,8 +37,7 @@ input,textarea,select{font-family:inherit}
 /* ===== 导航 ===== */
 #nav{
   position:sticky;top:0;z-index:100;
-  background:rgba(8,11,18,.85);
-  backdrop-filter:blur(14px);
+  background:#0b0f17; /* 纯色背景替代 backdrop-filter（后者在软件渲染下会导致文字消失） */
   border-bottom:1px solid var(--border-soft);
 }
 .nav-inner{
@@ -88,9 +87,14 @@ input,textarea,select{font-family:inherit}
 }
 .hero-title{
   font-family:var(--serif);font-size:clamp(44px,8vw,84px);letter-spacing:14px;font-weight:400;
-  background:linear-gradient(100deg,#f4e3b0 0%,var(--gold) 35%,var(--purple) 90%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  color:var(--gold); /* 兜底：渐变文字不可用时显示纯金色 */
   text-shadow:0 0 60px rgba(232,197,106,.12);
+}
+@supports (-webkit-background-clip:text) or (background-clip:text){
+  .hero-title{
+    background:linear-gradient(100deg,#f4e3b0 0%,var(--gold) 35%,var(--purple) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
 }
 .hero-tagline{
   margin-top:20px;font-family:var(--serif);font-size:clamp(15px,2vw,19px);
@@ -145,7 +149,7 @@ input,textarea,select{font-family:inherit}
 
 /* ===== 详情模态 ===== */
 .modal-mask{
-  position:fixed;inset:0;background:rgba(4,6,10,.82);backdrop-filter:blur(8px);
+  position:fixed;inset:0;background:rgba(4,6,10,.93); /* 同 nav：不用 backdrop-filter */
   z-index:200;display:flex;align-items:flex-start;justify-content:center;
   padding:40px 18px;overflow-y:auto;
 }
