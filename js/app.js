@@ -21,6 +21,24 @@ function toast(msg){
 
 /* ---------- 板块字段模板 ---------- */
 const SCHEMAS = {
+  characters: {
+    label: "角色", titleKey: "name",
+    fields: [
+      {k:"name",       l:"姓名"},
+      {k:"tag",        l:"一句话定位"},
+      {k:"age",        l:"年龄"},
+      {k:"role",       l:"身份"},
+      {k:"appearance", l:"外貌", multi:true},
+      {k:"personality",l:"性格", multi:true},
+      {k:"story",      l:"背景故事", multi:true},
+      {k:"lines",      l:"名台词", multi:true},
+      {k:"equipment",  l:"装备", multi:true},
+      {k:"img",        l:"照片 URL（留空用剪影占位）"},
+      {k:"note",       l:"备注", multi:true},
+    ],
+    empty: {id:"", name:"新角色", tag:"", age:"", role:"", appearance:"", personality:"", story:"",
+            lines:"", equipment:"", img:"", palette:["#8a8f98","#5c6068","#b8bdc8"], note:""}
+  },
   planets: {
     label: "星球", titleKey: "name",
     fields: [
@@ -106,7 +124,14 @@ function loadState(){
   const base = deep(window.ZDAX_DATA || {});
   try{
     const local = localStorage.getItem(LS_KEY);
-    if(local) return JSON.parse(local);
+    if(local){
+      const l = JSON.parse(local);
+      // merge：本地草稿缺少的新板块（如 characters）用发布版数据补齐
+      for(const k of Object.keys(base)){
+        if(l[k]===undefined) l[k] = base[k];
+      }
+      return l;
+    }
   }catch(e){}
   return base;
 }
@@ -142,6 +167,26 @@ function planetSVG(pal, uidSeed, seedNum){
     <circle cx="110" cy="110" r="74" fill="url(#${f})" opacity=".55"/>
     <circle cx="110" cy="110" r="74" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1.4"/>
     <ellipse cx="76" cy="70" rx="42" ry="26" fill="#ffffff" opacity=".09" transform="rotate(-24 76 70)"/>
+  </svg>`;
+}
+
+/* ---------- 角色剪影 SVG（照片占位） ---------- */
+function avatarSVG(pal, uidSeed){
+  const [c1,c2,c3] = pal || ["#8a8f98","#5c6068","#b8bdc8"];
+  return `<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="ag${uidSeed}" cx="50%" cy="40%" r="65%">
+        <stop offset="0%" stop-color="${c3}" stop-opacity=".55"/>
+        <stop offset="70%" stop-color="${c2}" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="${c1}" stop-opacity=".95"/>
+      </radialGradient>
+    </defs>
+    <circle cx="110" cy="110" r="98" fill="url(#ag${uidSeed})" opacity=".16"/>
+    <circle cx="110" cy="110" r="98" fill="none" stroke="${c2}" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="4 6"/>
+    <circle cx="110" cy="68" r="34" fill="${c2}" opacity=".88"/>
+    <path d="M110 112c-36 0-62 24-62 56v26h124v-26c0-32-26-56-62-56z" fill="${c2}" opacity=".88"/>
+    <circle cx="110" cy="68" r="34" fill="none" stroke="${c3}" stroke-opacity=".5" stroke-width="1.4"/>
+    <ellipse cx="94" cy="112" rx="26" ry="44" fill="${c1}" opacity=".35"/>
   </svg>`;
 }
 
@@ -289,22 +334,71 @@ function buildingModal(b){
   `);
 }
 
-/* ---------- 渲染：天枢 ---------- */
+/* ---------- 渲染：角色档案 ---------- */
+function renderCharacters(){
+  const list = state.characters || [];
+  $("#app").innerHTML = headHTML("CHARACTER ARCHIVE","角色档案","一个理性世界的越轨者，一个宇宙里的孤独者。两个人，隔着六十八天。") + `
+    <div class="grid">
+      ${list.map(c=>`
+        <div class="card" data-sec="characters" data-id="${c.id}">
+          <span class="card-badge">${esc(c.role?.split("·")[0]||"角色")}</span>
+          <div class="thumb">${c.img?`<img src="${esc(c.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:avatarSVG(c.palette, c.id||uid())}</div>
+          <div class="card-body">
+            <div class="card-title">${esc(c.name)}</div>
+            <div class="card-tag">${esc(c.tag||"")}</div>
+            <div class="card-line">${esc(c.role||"")}</div>
+          </div>
+        </div>`).join("")}
+    </div>`;
+}
+function characterModal(c){
+  const rows = [
+    ["年龄","", c.age], ["身份","", c.role], ["外貌","", c.appearance],
+    ["性格","", c.personality], ["背景故事","", c.story], ["名台词","", c.lines],
+    ["装备","", c.equipment]
+  ].filter(r=>r[2]);
+  openModal(`
+    <button class="modal-close">×</button>
+    <div class="m-title">${esc(c.name)}</div>
+    <div class="m-sub">${esc(c.tag||"")}</div>
+    <div class="m-hero">${c.img?`<img src="${esc(c.img)}" alt="">`:avatarSVG(c.palette, uid())}</div>
+    <div class="m-table">
+      ${rows.map(r=>`<div class="m-row"><div class="k">${r[0]}</div><div class="v">${esc(r[2]).replace(/\n/g,"<br>")}</div></div>`).join("")}
+    </div>
+    ${c.note?`<div class="m-note">${esc(c.note).replace(/\n/g,"<br>")}</div>`:""}
+  `);
+}
+
+/* ---------- 渲染：天枢（卡片式，点开详情） ---------- */
 function renderTianshu(){
   const t = state.tianshu || {};
   $("#app").innerHTML = headHTML("CORE AI SYSTEM","天枢系统","不是反派的反派：一切行动基于最优解计算。") + `
-    <div class="tianshu-showcase">
-      <div class="tianshu-visual">
-        <div class="orb">${tianshuSVG(uid())}</div>
-        <div style="font-family:var(--serif);letter-spacing:6px;font-size:20px">${esc(t.name||"天枢")}</div>
-        <div style="font-size:11px;color:var(--muted);letter-spacing:2px;text-align:center;line-height:1.9">${esc(t.class||"")}</div>
-      </div>
-      <div class="tianshu-fields">
-        ${[["外观","appearance"],["运行原理","principle"],["能力参数","ability"],["声线特征","voice"],["形态变化","forms"]]
-          .map(([l,k])=>t[k]?`<div class="tianshu-field"><div class="k">${l}</div><div class="v">${esc(t[k]).replace(/\n/g,"<br>")}</div></div>`:"").join("")}
-        ${t.note?`<div class="tianshu-field"><div class="k">备注</div><div class="v">${esc(t.note).replace(/\n/g,"<br>")}</div></div>`:""}
+    <div class="grid two">
+      <div class="card" data-sec="tianshu" data-id="${t.id||"tianshu"}">
+        <div class="thumb" style="height:230px">${t.img?`<img src="${esc(t.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:tianshuSVG(uid())}</div>
+        <div class="card-body">
+          <div class="card-title">${esc(t.name||"天枢")}</div>
+          <div class="card-tag">${esc(t.class||"")}</div>
+          <div class="card-line">${esc(t.ability?.slice(0,50)||"")}${(t.ability?.length||0)>50?"…":""}</div>
+        </div>
       </div>
     </div>`;
+}
+function tianshuModal(t){
+  const rows = [
+    ["定位","", t.class], ["外观","", t.appearance], ["运行原理","", t.principle],
+    ["能力参数","", t.ability], ["声线特征","", t.voice], ["形态变化","", t.forms]
+  ].filter(r=>r[2]);
+  openModal(`
+    <button class="modal-close">×</button>
+    <div class="m-title">${esc(t.name||"天枢")}</div>
+    <div class="m-sub">${esc(t.class||"")}</div>
+    <div class="m-hero">${t.img?`<img src="${esc(t.img)}" alt="">`:tianshuSVG(uid())}</div>
+    <div class="m-table">
+      ${rows.map(r=>`<div class="m-row"><div class="k">${r[0]}</div><div class="v">${esc(r[2]).replace(/\n/g,"<br>")}</div></div>`).join("")}
+    </div>
+    ${t.note?`<div class="m-note">${esc(t.note).replace(/\n/g,"<br>")}</div>`:""}
+  `);
 }
 
 /* ---------- 渲染：装备 ---------- */
@@ -453,6 +547,7 @@ function render(){
   renderNav();
   if(editing){ renderEdit(section); return; }
   switch(section){
+    case "characters": renderCharacters(); break;
     case "planets":    renderPlanets(); break;
     case "buildings":  renderBuildings(); break;
     case "tianshu":    renderTianshu(); break;
@@ -464,8 +559,10 @@ function render(){
     $$(".card[data-sec]").forEach(c=>{
       c.onclick = ()=>{
         const sec = c.dataset.sec, id = c.dataset.id;
-        if(sec==="planets")    planetModal(state.planets.find(p=>p.id===id));
+        if(sec==="characters") characterModal(state.characters.find(x=>x.id===id));
+        else if(sec==="planets")    planetModal(state.planets.find(p=>p.id===id));
         else if(sec==="buildings") buildingModal(state.buildings.find(b=>b.id===id));
+        else if(sec==="tianshu")    tianshuModal(state.tianshu||{});
         else if(sec==="equipment") equipmentModal(state.equipment.find(e=>e.id===id));
       };
     });
@@ -475,7 +572,7 @@ function render(){
 /* ---------- 路由 ---------- */
 function route(){
   const h = location.hash.replace(/^#\/?/,"") || "home";
-  section = ["planets","buildings","tianshu","equipment","production"].includes(h) ? h : "home";
+  section = ["characters","planets","buildings","tianshu","equipment","production"].includes(h) ? h : "home";
   render();
   window.scrollTo(0,0);
 }
