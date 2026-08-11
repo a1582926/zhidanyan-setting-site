@@ -113,6 +113,33 @@ const SCHEMAS = {
   }
 };
 
+/* ---------- 星域档案字段模板（风扰星域专用） ---------- */
+const REGION_SCHEMA = {
+  label: "星域", titleKey: "name",
+  fields: [
+    {k:"name",         l:"名称"},
+    {k:"tag",          l:"一句话定位"},
+    {k:"reg_type",     l:"类型"},
+    {k:"epoch",        l:"历元"},
+    {k:"ra",           l:"赤经 (RA)"},
+    {k:"dec",          l:"赤纬 (Dec)"},
+    {k:"constellation",l:"星座方向"},
+    {k:"dist_ly",      l:"距离"},
+    {k:"size_deg",     l:"角大小"},
+    {k:"radius_ly",    l:"半径"},
+    {k:"appmag_v",     l:"视星等"},
+    {k:"absmag_v",     l:"绝对星等"},
+    {k:"core",         l:"核心天体", multi:true},
+    {k:"members",      l:"成员天体", multi:true},
+    {k:"time_dilation",l:"时间膨胀梯度", multi:true},
+    {k:"danger",       l:"危险等级"},
+    {k:"names",        l:"其他编号"},
+    {k:"img",          l:"档案图 URL（留空用星域地图）"},
+    {k:"note",         l:"档案备注", multi:true},
+  ],
+  empty: null
+};
+
 /* ---------- 状态 ---------- */
 const LS_KEY = "zdax_site_edit_v1";
 let state = null;
@@ -219,6 +246,73 @@ function tianshuSVG(uidSeed){
   </svg>`;
 }
 
+/* ---------- 星域地图 SVG（风扰星域档案图） ---------- */
+function starMapSVG(uidSeed){
+  const stars = [];
+  for(let i=0;i<70;i++){
+    stars.push(`<circle cx="${10+Math.random()*540}" cy="${10+Math.random()*380}" r="${Math.random()<0.85?0.6:1.1}" fill="#8a94a8" opacity="${0.15+Math.random()*0.4}"/>`);
+  }
+  return `<svg viewBox="0 0 560 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+    <defs>
+      <radialGradient id="tg${uidSeed}" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff8e0" stop-opacity=".95"/>
+        <stop offset="30%" stop-color="#f2c14e" stop-opacity=".85"/>
+        <stop offset="70%" stop-color="#c96a2a" stop-opacity=".5"/>
+        <stop offset="100%" stop-color="#8a3a1a" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect x="0" y="0" width="560" height="420" fill="#0a0d14"/>
+    ${stars.join("")}
+    <!-- 时间膨胀环 -->
+    <circle cx="280" cy="200" r="160" fill="none" stroke="#8a94a8" stroke-opacity=".25" stroke-dasharray="3 5"/>
+    <circle cx="280" cy="200" r="110" fill="none" stroke="#c9a86a" stroke-opacity=".35" stroke-dasharray="3 5"/>
+    <circle cx="280" cy="200" r="60"  fill="none" stroke="#f2c14e" stroke-opacity=".5" stroke-dasharray="3 5"/>
+    <!-- 核心：天权 -->
+    <circle cx="280" cy="200" r="78" fill="url(#tg${uidSeed})"/>
+    <circle cx="280" cy="200" r="34" fill="#fff8e0" opacity=".9"/>
+    <path d="M280 160 L282 176 L296 170 L288 182 L302 184 L286 190 L292 202 L278 192 L270 204 L274 188 L260 186 L274 178 L266 166 L280 174 Z" fill="#fff" opacity=".75"/>
+    <g stroke="#ffd9a0" stroke-width="1" opacity=".7" fill="none">
+      <path d="M320 158 q14 10 8 26"/><path d="M240 158 q-14 10 -8 26"/>
+      <path d="M320 242 q14 -10 8 -26"/><path d="M240 242 q-14 -10 -8 -26"/>
+      <path d="M278 120 q-10 14 -26 8"/><path d="M282 280 q10 -14 26 -8"/>
+    </g>
+    <!-- 环标注 -->
+    <text x="434" y="104" fill="#8a94a8" font-size="9" text-anchor="middle">边缘 ≈ 1×</text>
+    <text x="388" y="136" fill="#c9a86a" font-size="9" text-anchor="middle">中圈 ≈ 10×</text>
+    <text x="334" y="168" fill="#f2c14e" font-size="9" text-anchor="middle">核心 ≈ 68×</text>
+    <text x="280" y="200" fill="#1a1208" font-size="13" font-weight="bold" text-anchor="middle">天权</text>
+    <!-- 星系：瑶光（紫） -->
+    <circle cx="128" cy="92" r="9" fill="#9b7bff" opacity=".9"/>
+    <circle cx="128" cy="92" r="13" fill="none" stroke="#9b7bff" opacity=".4"/>
+    <text x="128" y="76" fill="#c8b8f8" font-size="11" text-anchor="middle">瑶光星系</text>
+    <text x="128" y="114" fill="#8a94a8" font-size="9" text-anchor="middle">水晶星</text>
+    <!-- 星系：赭缥双星（红+蓝） -->
+    <circle cx="432" cy="84" r="7" fill="#e06c5a" opacity=".95"/>
+    <circle cx="446" cy="78" r="5" fill="#6fc3df" opacity=".95"/>
+    <text x="439" y="66" fill="#f2b8a8" font-size="11" text-anchor="middle">赭缥双星</text>
+    <text x="439" y="104" fill="#8a94a8" font-size="9" text-anchor="middle">双日沙漠</text>
+    <!-- 星系：天璇（青绿） -->
+    <circle cx="116" cy="322" r="9" fill="#5fc9c9" opacity=".9"/>
+    <circle cx="116" cy="322" r="13" fill="none" stroke="#5fc9c9" opacity=".4"/>
+    <text x="116" y="306" fill="#a8e8d8" font-size="11" text-anchor="middle">天璇星系</text>
+    <text x="116" y="344" fill="#8a94a8" font-size="9" text-anchor="middle">极光海洋</text>
+    <!-- 星系：玉衡（橙红） -->
+    <circle cx="424" cy="318" r="9" fill="#e8935a" opacity=".9"/>
+    <circle cx="424" cy="318" r="13" fill="none" stroke="#e8935a" opacity=".4"/>
+    <text x="424" y="302" fill="#f2c9a0" font-size="11" text-anchor="middle">玉衡星系</text>
+    <text x="424" y="340" fill="#8a94a8" font-size="9" text-anchor="middle">风暴巨星</text>
+    <!-- 叶星探索路线：水晶星→双日沙漠→极光海洋→风暴巨星→核心 -->
+    <path d="M128 92 L432 84 L116 322 L424 318 L300 230" fill="none" stroke="#8bd19b" stroke-width="1.4" stroke-dasharray="5 4" opacity=".8"/>
+    <polygon points="300,230 292,232 296,224" fill="#8bd19b" opacity=".9"/>
+    <!-- 图例 -->
+    <g transform="translate(14,372)">
+      <text x="0" y="0" fill="#8a94a8" font-size="9">—— 叶星探索路线（深入星域，时间膨胀加剧）</text>
+      <text x="0" y="16" fill="#8a94a8" font-size="9">中心：垂死恒星「天权」 · 虚线环 = 时间膨胀梯度</text>
+    </g>
+    <text x="280" y="414" fill="#4a5468" font-size="9" text-anchor="middle">风扰星域 ZDR-1 · 天鹅座方向 · 距太阳系约 300 光年</text>
+  </svg>`;
+}
+
 /* ---------- 渲染：导航态 ---------- */
 function renderNav(){
   $$("#navLinks a").forEach(a=>a.classList.toggle("active", a.dataset.nav===section));
@@ -286,19 +380,39 @@ function planetModal(p){
 /* ---------- 渲染：星球档案 ---------- */
 function renderPlanets(){
   const list = state.planets || [];
-  $("#app").innerHTML = headHTML("PLANETARY ARCHIVE","星球档案","六颗星球，六种情感的颜色。每一颗星都是剧中的一个情绪坐标。") + `
+  $("#app").innerHTML = headHTML("PLANETARY ARCHIVE","星球档案","六颗星球，六种情感的颜色。每一颗星都是剧中的一个情绪坐标。（风扰星域为星域档案）") + `
     <div class="grid">
       ${list.map(p=>`
         <div class="card" data-sec="planets" data-id="${p.id}">
-          <span class="card-badge">${esc(p.tag?.split("·")[0]||"未分类")}</span>
-          <div class="thumb">${p.img?`<img src="${esc(p.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:planetSVG(p.palette, p.id||uid(), 7)}</div>
+          <span class="card-badge">${p.kind==="region"?"星域档案":esc(p.tag?.split("·")[0]||"未分类")}</span>
+          <div class="thumb">${p.img?`<img src="${esc(p.img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:(p.kind==="region"?starMapSVG(p.id||uid()):planetSVG(p.palette, p.id||uid(), 7))}</div>
           <div class="card-body">
             <div class="card-title">${esc(p.name)}</div>
-            <div class="card-tag">${esc(p.tag||"")}</div>
-            <div class="card-line">${esc(p.terrain?.slice(0,60)||"")}${(p.terrain?.length||0)>60?"…":""}</div>
+            <div class="card-tag">${esc(p.kind==="region"?(p.tag||"星域档案"):(p.tag||""))}</div>
+            <div class="card-line">${p.kind==="region"?esc(p.dist_ly||""):esc(p.terrain?.slice(0,60)||"")}${!p.kind==="region"&&(p.terrain?.length||0)>60?"…":""}</div>
           </div>
         </div>`).join("")}
     </div>`;
+}
+
+function regionModal(r){
+  const rows = [
+    ["类型","", r.reg_type], ["历元","", r.epoch], ["赤经 (RA)","", r.ra], ["赤纬 (Dec)","", r.dec],
+    ["星座方向","", r.constellation], ["距离","", r.dist_ly], ["角大小","", r.size_deg],
+    ["半径","", r.radius_ly], ["视星等","", r.appmag_v], ["绝对星等","", r.absmag_v],
+    ["核心天体","", r.core], ["成员天体","", r.members], ["时间膨胀梯度","", r.time_dilation],
+    ["危险等级","", r.danger], ["其他编号","", r.names]
+  ].filter(x=>x[2]);
+  openModal(`
+    <button class="modal-close">×</button>
+    <div class="m-title">${esc(r.name)}</div>
+    <div class="m-sub">${esc(r.tag||"")}</div>
+    <div class="m-hero" style="max-width:520px;margin:0 auto">${r.img?`<img src="${esc(r.img)}" alt="">`:starMapSVG(uid())}</div>
+    <div class="m-table">
+      ${rows.map(x=>`<div class="m-row"><div class="k">${x[0]}</div><div class="v">${esc(x[2]).replace(/\n/g,"<br>")}</div></div>`).join("")}
+    </div>
+    ${r.note?`<div class="m-note">${esc(r.note).replace(/\n/g,"<br>")}</div>`:""}
+  `);
 }
 
 /* ---------- 渲染：建筑设施 ---------- */
@@ -479,8 +593,9 @@ function renderEdit(sectionName){
     return;
   }
   const items = state[sectionName];
+  const addLabel = SCHEMAS[sectionName].label;
   app.insertAdjacentHTML("beforeend", `<div class="grid">${items.map((it,i)=>editFormHTML(sectionName, it, i)).join("")}
-    <button class="ed-add" data-add="${sectionName}">＋ 新增${SCHEMAS[sectionName].label}</button></div>`);
+    <button class="ed-add" data-add="${sectionName}">＋ 新增${addLabel}</button></div>`);
   items.forEach((it,i)=>bindForm(sectionName, it, i));
   $$(".ed-add").forEach(b=>b.onclick = ()=>{ addItem(b.dataset.add); });
   $("#btnExport").onclick = exportData;
@@ -488,7 +603,7 @@ function renderEdit(sectionName){
 }
 
 function editFormHTML(sec, it, idx){
-  const sch = SCHEMAS[sec];
+  const sch = (sec==="planets" && it && it.kind==="region") ? REGION_SCHEMA : SCHEMAS[sec];
   const fields = sch.fields.map(f=>`
     <div>
       <label>${f.l}${f.unit?`（${f.unit}）`:""}</label>
@@ -560,7 +675,10 @@ function render(){
       c.onclick = ()=>{
         const sec = c.dataset.sec, id = c.dataset.id;
         if(sec==="characters") characterModal(state.characters.find(x=>x.id===id));
-        else if(sec==="planets")    planetModal(state.planets.find(p=>p.id===id));
+        else if(sec==="planets"){
+          const p = state.planets.find(x=>x.id===id);
+          if(p && p.kind==="region") regionModal(p); else planetModal(p);
+        }
         else if(sec==="buildings") buildingModal(state.buildings.find(b=>b.id===id));
         else if(sec==="tianshu")    tianshuModal(state.tianshu||{});
         else if(sec==="equipment") equipmentModal(state.equipment.find(e=>e.id===id));
