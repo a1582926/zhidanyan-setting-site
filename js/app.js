@@ -64,6 +64,7 @@ const SCHEMAS = {
     label: "建筑", titleKey: "name",
     fields: [
       {k:"name",     l:"名称"},
+      {k:"name_en",  l:"英文名/缩写"},
       {k:"location", l:"位置"},
       {k:"material", l:"建筑材料", multi:true},
       {k:"appearance",l:"外观设计", multi:true},
@@ -444,7 +445,7 @@ function renderBuildings(){
 }
 function buildingModal(b){
   const rows = [
-    ["位置","", b.location], ["材料","", b.material], ["外观设计","", b.appearance],
+    ["名称","", b.name], ["英文名/缩写","", b.name_en], ["位置","", b.location], ["材料","", b.material], ["外观设计","", b.appearance],
     ["标语与文字","", b.signs], ["尺寸与空间","", b.size], ["楼层结构","", b.levels],
     ["能量来源","", b.energy], ["功能","", b.function]
   ].filter(r=>r[2]);
