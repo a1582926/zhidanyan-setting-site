@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《致：黯淡星》官方设定站 · v0 预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   星图档案 · 设计系统 v0
+   ============================================================ */
+:root{
+  --ink:#07090f;          /* 深空墨黑 */
+  --deep:#0b1220;         /* 星云深蓝黑 */
+  --gold:#e8c56a;         /* 档案纸金（天权/裂隙/主题色）*/
+  --gold-line:#d8b86a;    /* 描金星图线 */
+  --gold-dim:rgba(232,197,106,.30);
+  --text:#e8e6dc;         /* 星雾白 */
+  --text-sub:#8a93a8;     /* 灰蓝次级文字 */
+  --line:rgba(216,184,106,.16);
+  --route:#7fd9a8;        /* 叶星探索路线绿 */
+  --serif:"Noto Serif SC","SimSun","STSong",Georgia,serif;
+  --mono:Consolas,"Courier New",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--serif);
+  overflow-x:hidden;
+}
+
+/* ---------- 星空背景 ---------- */
+#space{position:fixed;inset:0;z-index:0;pointer-events:none}
+.nebula{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(38% 30% at 78% 18%, rgba(64,80,140,.16), transparent 70%),
+    radial-gradient(30% 26% at 16% 70%, rgba(140,80,64,.12), transparent 70%),
+    radial-gradient(22% 18% at 55% 88%, rgba(120,90,180,.10), transparent 70%);
+}
+
+/* ---------- 分类导航（下滑浮现） ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:center;gap:6px;
+  padding:14px 20px;
+  background:linear-gradient(180deg, rgba(7,9,15,.92), rgba(7,9,15,.72) 80%, transparent);
+  backdrop-filter:blur(8px);
+  transform:translateY(-110%);
+  transition:transform .6s cubic-bezier(.22,.8,.24,1);
+}
+#nav.show{transform:translateY(0)}
+#nav a{
+  color:var(--text-sub);text-decoration:none;font-size:14px;
+  padding:7px 16px;border:1px solid transparent;border-radius:2px;
+  letter-spacing:.12em;transition:all .35s;
+}
+#nav a:hover{color:var(--gold);border-color:var(--gold-dim);background:rgba(232,197,106,.06)}
+#nav a.active{color:var(--gold);border-color:var(--gold-dim)}
+#nav .nav-home{margin-right:14px;color:var(--gold);font-weight:600;letter-spacing:.2em}
+
+/* ---------- 封面 ---------- */
+#hero{
+  position:relative;z-index:1;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:0 20px;
+}
+.hero-fade{opacity:0;transform:translateY(26px);animation:heroIn 1.2s cubic-bezier(.22,.8,.24,1) forwards}
+.hero-fade.d1{animation-delay:.15s}.hero-fade.d2{animation-delay:.42s}
+.hero-fade.d3{animation-delay:.7s}.hero-fade.d4{animation-delay:1s}
+@keyframes heroIn{to{opacity:1;transform:translateY(0)}}
+.hero-star{
+  font-family:var(--mono);font-size:12px;letter-spacing:.5em;color:var(--gold);
+  margin-bottom:26px;text-transform:uppercase;
+}
+.hero-star::before,.hero-star::after{content:"✦";margin:0 18px;color:var(--gold-line);font-size:10px}
+#hero h1{
+  font-size:clamp(52px,9vw,104px);font-weight:900;letter-spacing:.14em;
+  color:var(--text);text-shadow:0 0 46px rgba(232,197,106,.22);
+}
+#hero .tagline{
+  margin-top:22px;font-size:clamp(17px,2.4vw,24px);color:var(--gold);
+  letter-spacing:.3em;font-weight:400;
+}
+#hero .sub{
+  margin-top:14px;font-size:13px;color:var(--text-sub);letter-spacing:.18em;
+}
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-sub);font-size:12px;letter-spacing:.3em;
+  animation:heroIn 1.2s 1.3s cubic-bezier(.22,.8,.24,1) both;
+}
+.scroll-hint .arrow{
+  width:22px;height:36px;border:1.5px solid var(--gold-dim);border-radius:12px;
+  display:flex;justify-content:center;padding-top:7px;
+}
+.scroll-hint .arrow i{
+  width:3px;height:8px;border-radius:2px;background:var(--gold);
+  animation:drip 1.8s ease-in-out infinite;
+}
+@keyframes drip{0%{transform:translateY(0);opacity:1}70%{transform:translateY(12px);opacity:0}100%{transform:translateY(0);opacity:0}}
+
+/* ---------- 板块通用 ---------- */
+section.panel{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:110px 24px 60px}
+.panel-head{text-align:center;margin-bottom:56px}
+.panel-head .idx{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.5em;display:block;margin-bottom:12px}
+.panel-head h2{font-size:clamp(28px,4vw,44px);letter-spacing:.2em;font-weight:900}
+.panel-head .rule{
+  width:1px;height:44px;margin:22px auto 0;background:linear-gradient(var(--gold),transparent);
+}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.22,.8,.24,1),transform .9s cubic-bezier(.22,.8,.24,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ============================================================
+   星系板块 · 星图
+   ============================================================ */
+#galaxy{max-width:1320px}
+.starmap-wrap{position:relative}
+#starmap{
+  position:relative;width:min(1080px,100%);aspect-ratio:1000/760;margin:0 auto;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(46% 40% at 50% 50%, rgba(232,197,106,.07), transparent 70%),
+    radial-gradient(60% 55% at 30% 30%, rgba(64,80,140,.10), transparent 70%),
+    var(--deep);
+  overflow:hidden;
+}
+#starmap::before{ /* 角标（星表档案感） */
+  content:"ZDR-1 · 风扰星域 · 天鹅座方向 · J2000.0";position:absolute;top:10px;left:14px;
+  font-family:var(--mono);font-size:11px;color:var(--text-sub);letter-spacing:.14em;z-index:5;
+}
+#starmap::after{content:"RA 20h15m · DEC +38°30′";position:absolute;bottom:10px;right:14px;
+  font-family:var(--mono);font-size:11px;color:var(--text-sub);letter-spacing:.14em;z-index:5;}
+#starmap svg{position:absolute;inset:0;width:100%;height:100%}
+#starmap svg .ring{fill:none;stroke:var(--gold-dim);stroke-width:1;stroke-dasharray:3 7}
+#starmap svg .ring-lbl{fill:var(--text-sub);font-family:var(--mono);font-size:11px;letter-spacing:.15em}
+#starmap svg .route{
+  fill:none;stroke:var(--route);stroke-width:1.6;stroke-dasharray:7 6;opacity:.75;
+  animation:routeFlow 3.4s linear infinite;
+}
+@keyframes routeFlow{to{stroke-dashoffset:-13}}
+#starmap svg .route-lbl{fill:var(--route);font-family:var(--mono);font-size:11px}
+
+/* 天权核心 */
+#core{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:150px;height:150px;z-index:4;cursor:pointer;
+}
+#core .ball{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%, #ffe9a8, var(--gold) 34%, #c96f3a 68%, #7a2f22 100%);
+  box-shadow:0 0 60px rgba(232,197,106,.55), 0 0 140px rgba(201,111,58,.35), inset -14px -18px 40px rgba(60,15,10,.75);
+  animation:corePulse 5s ease-in-out infinite;
+}
+#core .fade-rim{position:absolute;inset:-16px;border-radius:50%;border:1px dashed rgba(232,197,106,.4);animation:spin 60s linear infinite}
+@keyframes corePulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.045);filter:brightness(1.14)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#core .name{
+  position:absolute;left:50%;bottom:-34px;transform:translateX(-50%);
+  font-size:15px;letter-spacing:.3em;color:var(--gold);white-space:nowrap;
+  text-shadow:0 0 14px rgba(232,197,106,.5);
+}
+#core .sub{position:absolute;left:50%;bottom:-56px;transform:translateX(-50%);
+  font-size:11px;color:var(--text-sub);letter-spacing:.18em;white-space:nowrap;font-family:var(--mono)}
+
+/* 恒星系统节点（5 个，含荧惑星所在太阳系） */
+.sys{position:absolute;z-index:3;transform:translate(-50%,-50%)}
+.sys-star{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+.sys-star.s1{width:26px;height:26px}   /* 太阳 */
+.sys-star.s2{width:20px;height:20px}   /* 瑶光 K 橙矮 */
+.sys-star.s3{width:18px;height:18px}   /* 赭（红）*/
+.sys-star.s4{width:22px;height:22px}   /* 天璇 G 类太阳 */
+.sys-star.s5{width:46px;height:46px}   /* 渊（气态巨行星）*/
+.sys-star-lbl{
+  position:absolute;left:50%;top:calc(50% + 20px);transform:translateX(-50%);
+  font-size:11px;color:var(--text-sub);letter-spacing:.15em;white-space:nowrap;
+  opacity:0;transition:opacity .4s;
+}
+.sys:hover .sys-star-lbl{opacity:1}
+.orbit{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border:1px dashed rgba(216,184,106,.25);border-radius:50%;
+}
+.planet-wrap{
+  position:absolute;left:50%;top:50%;width:100%;height:100%;
+  animation:orbitSpin var(--period,24s) linear infinite;
+}
+@keyframes orbitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.planet{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);cursor:pointer;z-index:6}
+.planet img{
+  display:block;border-radius:50%;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), box-shadow .45s;
+}
+.planet .glow{
+  position:absolute;inset:-30%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle, var(--glow,rgba(232,197,106,.28)), transparent 68%);
+  opacity:.55;transition:opacity .45s;
+}
+.planet .name{
+  position:absolute;left:50%;top:calc(100% + 14px);transform:translate(-50%,6px);
+  font-size:14px;letter-spacing:.24em;white-space:nowrap;color:var(--text);
+  text-shadow:0 0 12px rgba(0,0,0,.9);opacity:0;transition:opacity .4s,transform .4s;
+}
+.planet .name small{display:block;text-align:center;font-size:10px;color:var(--text-sub);letter-spacing:.1em;margin-top:3px}
+.planet:hover img{transform:translate(-50%,-50%) scale(1.22)}
+.planet:hover .glow{opacity:1}
+.planet:hover .name{opacity:1;transform:translate(-50%,0)}
+
+/* 移动端：星图缩为列表 */
+.planet-list{display:none}
+
+/* ---------- 风扰星域档案条 ---------- */
+.region-card{
+  max-width:1080px;margin:34px auto 0;border:1px solid var(--line);
+  border-left:3px solid var(--gold);background:rgba(11,18,32,.6);
+  padding:26px 32px;position:relative;
+}
+.region-card h3{font-size:20px;letter-spacing:.26em;color:var(--gold);margin-bottom:4px}
+.region-card .rc-sub{font-family:var(--mono);font-size:12px;color:var(--text-sub);letter-spacing:.14em;margin-bottom:16px}
+.region-card .rc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.region-card .rc-item .k{font-size:11px;color:var(--text-sub);letter-spacing:.16em;margin-bottom:5px}
+.region-card .rc-item .v{font-size:14px;line-height:1.7;color:var(--text)}
+.region-card .rc-danger{color:#e06c5a}
+
+/* ---------- 其余板块 · 卡片骨架 ---------- */
+.cards{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px;
+}
+.card{
+  border:1px solid var(--line);background:rgba(11,18,32,.55);
+  overflow:hidden;cursor:pointer;position:relative;
+  transition:transform .5s cubic-bezier(.22,.8,.24,1), border-color .5s, box-shadow .5s;
+}
+.card:hover{transform:translateY(-7px);border-color:var(--gold-dim);box-shadow:0 16px 44px rgba(0,0,0,.5), 0 0 26px rgba(232,197,106,.08)}
+.card .img-slot{
+  height:172px;border-bottom:1px solid var(--line);position:relative;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    repeating-linear-gradient(45deg, rgba(216,184,106,.035) 0 10px, transparent 10px 20px),
+    radial-gradient(60% 70% at 50% 40%, rgba(64,80,140,.14), transparent 70%);
+}
+.card .img-slot .ph{
+  font-size:11px;color:var(--text-sub);letter-spacing:.22em;
+  border:1px dashed var(--gold-dim);border-radius:2px;padding:9px 16px;
+  background:rgba(7,9,15,.5);
+}
+.card .img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:20px 22px 24px}
+.card .body h4{font-size:18px;letter-spacing:.14em;margin-bottom:8px}
+.card .body .tag{font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:12px;font-family:var(--mono)}
+.card .body p{font-size:13.5px;color:var(--text-sub);line-height:1.9;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card .corner{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;color:var(--gold-dim);letter-spacing:.2em}
+/* 天枢大卡 */
+.card.tianshu-card{grid-column:1/-1;display:grid;grid-template-columns:340px 1fr}
+.card.tianshu-card .img-slot{height:100%;border-bottom:none;border-right:1px solid var(--line);min-height:240px}
+
+/* ---------- 详情模态 ---------- */
+.modal-mask{
+  position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.78);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.modal-mask.open{opacity:1;pointer-events:auto}
+.modal{
+  width:min(860px,100%);max-height:88vh;overflow-y:auto;
+  background:linear-gradient(180deg,#0c1322,#0a0f1a);
+  border:1px solid var(--gold-dim);box-shadow:0 30px 90px rgba(0,0,0,.75), 0 0 50px rgba(232,197,106,.08);
+  transform:translateY(26px);transition:transform .5s cubic-bezier(.22,.8,.24,1);
+  position:relative;
+}
+.modal-mask.open .modal{transform:translateY(0)}
+.modal .m-close{
+  position:absolute;top:14px;right:18px;z-index:5;background:none;border:none;cursor:pointer;
+  color:var(--text-sub);font-size:24px;line-height:1;transition:color .3s;
+}
+.modal .m-close:hover{color:var(--gold)}
+.modal .m-head{padding:34px 38px 0}
+.modal .m-head .m-idx{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.4em}
+.modal .m-head h3{font-size:30px;letter-spacing:.18em;margin:8px 0 6px}
+.modal .m-head .m-tag{font-size:13px;color:var(--text-sub);letter-spacing:.1em}
+.modal .m-body{padding:26px 38px 38px;display:grid;grid-template-columns:minmax(220px,280px) 1fr;gap:30px}
+.modal .m-img{
+  border:1px dashed var(--gold-dim);min-height:220px;border-radius:2px;position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(60% 70% at 50% 40%, rgba(64,80,140,.14), transparent 70%);
+}
+.modal .m-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.modal .m-img .up-hint{
+  position:relative;z-index:2;text-align:center;color:var(--text-sub);font-size:12px;letter-spacing:.14em;
+}
+.modal .m-img .up-hint .ic{font-size:26px;color:var(--gold-dim);display:block;margin-bottom:8px}
+.modal .m-img input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3}
+.modal .m-img .rm-btn{position:absolute;bottom:8px;right:8px;z-index:4;font-size:11px;color:var(--text-sub);
+  background:rgba(7,9,15,.8);border:1px solid var(--line);padding:4px 10px;cursor:pointer;display:none}
+.modal .m-img.has .rm-btn{display:block}
+.modal .m-img.has .up-hint{opacity:0;transition:opacity .3s}
+.modal .m-img.has:hover .up-hint{opacity:1;background:rgba(7,9,15,.55);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.modal .m-fields{font-size:14px;line-height:1.9}
+.modal .m-fields .row{margin-bottom:16px}
+.modal .m-fields .k{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.2em;display:block;margin-bottom:4px}
+.modal .m-fields .v{color:var(--text)}
+.modal .m-fields .v.sub{color:var(--text-sub);font-size:13.5px}
+
+/* ---------- 页脚 ---------- */
+footer{position:relative;z-index:1;text-align:center;padding:70px 20px 50px;border-top:1px solid var(--line)}
+footer .ft-title{font-size:22px;letter-spacing:.4em;color:var(--gold)}
+footer .ft-line{margin-top:10px;font-size:13px;color:var(--text-sub);letter-spacing:.2em}
+footer .ft-meta{margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--text-sub)}
+
+@media (max-width:820px){
+  #starmap{display:none}
+  .planet-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;max-width:720px;margin:0 auto}
+  .planet-list .pl-item{border:1px solid var(--line);background:rgba(11,18,32,.55);padding:18px;text-align:center;cursor:pointer;transition:border-color .4s,transform .4s}
+  .planet-list .pl-item:hover{border-color:var(--gold-dim);transform:translateY(-4px)}
+  .planet-list .pl-item img{width:74px;height:74px;border-radius:50%;margin:0 auto 12px;display:block;box-shadow:0 0 24px var(--glow,rgba(232,197,106,.25))}
+  .planet-list .pl-item .n{font-size:14px;letter-spacing:.16em}
+  .card.tianshu-card{grid-template-columns:1fr}
+  .modal .m-body{grid-template-columns:1fr}
+  .region-card .rc-grid{grid-template-columns:repeat(2,1fr)}
+  #nav{gap:2px;overflow-x:auto}
+  #nav a{padding:7px 10px;font-size:12px;white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .hero-fade{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="space"></canvas>
+<div class="nebula"></div>
+
+<!-- 分类导航 -->
+<nav id="nav">
+  <a class="nav-home" href="#hero">致：黯淡星</a>
+  <a href="#galaxy" data-nav="galaxy">星系</a>
+  <a href="#characters" data-nav="characters">角色档案</a>
+  <a href="#buildings" data-nav="buildings">建筑设施</a>
+  <a href="#tianshu" data-nav="tianshu">天枢系统</a>
+  <a href="#equipment" data-nav="equipment">装备</a>
+  <a href="#production" data-nav="production">制作进度</a>
+</nav>
+
+<!-- 封面 -->
+<header id="hero">
+  <div class="hero-star hero-fade d1">OFFICIAL SETTING ARCHIVE · 2277</div>
+  <h1 class="hero-fade d2">致：黯淡星</h1>
+  <div class="tagline hero-fade d3">因为爱不是等待，是翻越。</div>
+  <div class="sub hero-fade d4">AI 科幻改编版 · 世界观设定档案 · 荧惑星 · 中国深空通讯中枢-荧惑星分站</div>
+  <div class="scroll-hint">
+    <span>下滑探索</span>
+    <div class="arrow"><i></i></div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= 星系板块 ================= -->
+  <section class="panel" id="galaxy">
+    <div class="panel-head reveal">
+      <span class="idx">SECTION 01 · GALAXY</span>
+      <h2>星系</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="starmap-wrap reveal">
+      <div id="starmap">
+        <svg viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
+          <!-- 时间膨胀环 -->
+          <circle class="ring" cx="500" cy="380" r="122"/>
+          <circle class="ring" cx="500" cy="380" r="248"/>
+          <circle class="ring" cx="500" cy="380" r="354"/>
+          <text class="ring-lbl" x="500" y="252">×68 核心区</text>
+          <text class="ring-lbl" x="500" y="126">×10 中圈</text>
+          <text class="ring-lbl" x="500" y="16">×1 边缘</text>
+          <!-- 叶星探索路线：荧惑星 → 水晶星 → 双日沙漠 → 极光海洋 → 风暴巨星 → 核心 -->
+          <path class="route" id="routePath" d=""/>
+          <text class="route-lbl" id="routeLbl1" x="0" y="0">叶星探索路线</text>
+          <text class="route-lbl" id="routeLbl2" x="0" y="0">· 300 光年 ·</text>
+        </svg>
+
+        <!-- 天权核心 -->
+        <div id="core" data-id="fengrao" title="天权 · 风扰星域核心">
+          <div class="fade-rim"></div>
+          <div class="ball"></div>
+          <div class="name">天 权</div>
+          <div class="sub">垂死红巨星 · 风扰星域核心</div>
+        </div>
+
+        <!-- 5 个恒星系统（行星绕各自恒星公转） -->
+        <div class="sys" id="sys-yinghuo" style="left:11%;top:15%">
+          <div class="sys-star s1" style="background:radial-gradient(circle at 38% 34%, #fff7d8, #ffd86a 45%, #c98a2a 100%);box-shadow:0 0 22px rgba(255,216,106,.8),0 0 60px rgba(255,216,106,.35)"></div>
+          <div class="sys-star-lbl">太阳 · 太阳系</div>
+          <div class="orbit" style="width:130px;height:130px">
+            <div class="planet-wrap" style="--period:26s">
+              <div class="planet" data-id="yinghuo" style="--glow:rgba(229,138,90,.3)">
+                <img class="ptex" data-planet="yinghuo" width="44" height="44" alt="荧惑星">
+                <div class="glow"></div>
+                <div class="name">荧惑星<small>研究院所在 · 主舞台</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys" id="sys-shuijing" style="left:76%;top:24%">
+          <div class="sys-star s2" style="background:radial-gradient(circle at 38% 34%, #ffe6c8, #ffb066 50%, #b06a2a 100%);box-shadow:0 0 16px rgba(255,176,102,.75),0 0 46px rgba(255,176,102,.3)"></div>
+          <div class="sys-star-lbl">瑶光 · K 型橙矮星</div>
+          <div class="orbit" style="width:118px;height:118px">
+            <div class="planet-wrap" style="--period:20s">
+              <div class="planet" data-id="shuijing" style="--glow:rgba(200,184,232,.32)">
+                <img class="ptex" data-planet="shuijing" width="40" height="40" alt="水晶星">
+                <div class="glow"></div>
+                <div class="name">水晶星<small>瑶光星系 · 第三行星</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys" id="sys-shuangri" style="left:79%;top:62%">
+          <div class="sys-star s3" style="background:radial-gradient(circle at 38% 34%, #ffd0b0, #e07840 55%, #8a3018 100%);box-shadow:0 0 15px rgba(224,120,64,.75),0 0 44px rgba(224,120,64,.3);left:calc(50% - 12px)"></div>
+          <div class="sys-star s3" style="background:radial-gradient(circle at 38% 34%, #d8e8ff, #6f9fd8 55%, #284878 100%);box-shadow:0 0 18px rgba(111,159,216,.8),0 0 50px rgba(111,159,216,.35);left:calc(50% + 12px)"></div>
+          <div class="sys-star-lbl">赭（K 冷星）· 缥（B 热星）</div>
+          <div class="orbit" style="width:132px;height:132px">
+            <div class="planet-wrap" style="--period:30s">
+              <div class="planet" data-id="shuangri" style="--glow:rgba(242,201,160,.3)">
+                <img class="ptex" data-planet="shuangri" width="42" height="42" alt="双日沙漠">
+                <div class="glow"></div>
+                <div class="name">双日沙漠<small>赭缥双星 · 高偏心轨道</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys" id="sys-jiguang" style="left:21%;top:63%">
+          <div class="sys-star s4" style="background:radial-gradient(circle at 38% 34%, #fff8e0, #ffe08a 48%, #c08028 100%);box-shadow:0 0 20px rgba(255,224,138,.8),0 0 54px rgba(255,224,138,.32)"></div>
+          <div class="sys-star-lbl">天璇 · G 型类太阳</div>
+          <div class="orbit" style="width:112px;height:112px">
+            <div class="planet-wrap" style="--period:18s">
+              <div class="planet" data-id="jiguang" style="--glow:rgba(95,201,201,.32)">
+                <img class="ptex" data-planet="jiguang" width="38" height="38" alt="极光海洋">
+                <div class="glow"></div>
+                <div class="name">极光海洋<small>天璇星系 · 第二行星</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sys" id="sys-fengbao" style="left:24%;top:26%">
+          <div class="sys-star s5" style="background:radial-gradient(circle at 36% 32%, #ffb890, #d85a32 55%, #6a1a10 100%);box-shadow:0 0 28px rgba(216,90,50,.7),0 0 70px rgba(216,90,50,.3)"></div>
+          <div class="sys-star-lbl">渊 · 气态巨行星（玉衡星系）</div>
+          <div class="orbit" style="width:100px;height:100px">
+            <div class="planet-wrap" style="--period:12s">
+              <div class="planet" data-id="fengbao" style="--glow:rgba(224,108,90,.32)">
+                <img class="ptex" data-planet="fengbao" width="34" height="34" alt="风暴巨星">
+                <div class="glow"></div>
+                <div class="name">风暴巨星<small>渊的第三卫星 · 潮汐锁定</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 风扰星域档案条 -->
+      <div class="region-card reveal" id="regionCard">
+        <h3>风扰星域</h3>
+        <div class="rc-sub">ZDR-1 · 「时间的伤口」· 垂死恒星核心区 · 距太阳系约 300 光年</div>
+        <div class="rc-grid">
+          <div class="rc-item"><span class="k">核心天体</span><span class="v">垂死红巨星「天权」<br>热脉冲膨胀 + 核心致密化</span></div>
+          <div class="rc-item"><span class="k">成员星系</span><span class="v">瑶光 · 天璇 · 玉衡<br>赭缥双星</span></div>
+          <div class="rc-item"><span class="k">时间膨胀</span><span class="v">边缘 1× → 中圈 10×<br>核心 68×（叶星一天=六十八天）</span></div>
+          <div class="rc-item"><span class="k">危险等级</span><span class="v rc-danger">S 级 · 时间膨胀危险区<br>通讯延迟不可控</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 移动端行星列表 -->
+    <div class="planet-list" id="planetList"></div>
+  </section>
+
+  <!-- ================= 其余板块 · 卡片骨架 ================= -->
+  <section class="panel" id="characters">
+    <div class="panel-head reveal"><span class="idx">SECTION 02 · CHARACTERS</span><h2>角色档案</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-characters"></div>
+  </section>
+
+  <section class="panel" id="buildings">
+    <div class="panel-head reveal"><span class="idx">SECTION 03 · BUILDINGS</span><h2>建筑设施</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-buildings"></div>
+  </section>
+
+  <section class="panel" id="tianshu">
+    <div class="panel-head reveal"><span class="idx">SECTION 04 · TIANSHU</span><h2>天枢系统</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-tianshu"></div>
+  </section>
+
+  <section class="panel" id="equipment">
+    <div class="panel-head reveal"><span class="idx">SECTION 05 · EQUIPMENT</span><h2>装备</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-equipment"></div>
+  </section>
+
+  <section class="panel" id="production">
+    <div class="panel-head reveal"><span class="idx">SECTION 06 · PRODUCTION</span><h2>制作进度</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-production"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="ft-title">致：黯淡星</div>
+  <div class="ft-line">因为爱不是等待，是翻越。</div>
+  <div class="ft-meta">设定档案 v1.27 · 世界观设定完善中 · v0 视觉预览</div>
+</footer>
+
+<!-- 详情模态 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modal">
+    <button class="m-close" id="mClose">✕</button>
+    <div class="m-head">
+      <div class="m-idx" id="mIdx"></div>
+      <h3 id="mName"></h3>
+      <div class="m-tag" id="mTag"></div>
+    </div>
+    <div class="m-body">
+      <div class="m-img" id="mImg">
+        <div class="up-hint"><span class="ic">▢</span>概念图待上传<br>点击选择图片（存本机）</div>
+        <input type="file" id="mFile" accept="image/*">
+        <button class="rm-btn" id="mRm">移除图片</button>
+      </div>
+      <div class="m-fields" id="mFields"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================= 内嵌精简数据（正式版从 data/data.js 读取） ================= */
+const P = {
+  yinghuo:{id:"yinghuo",name:"荧惑星",tag:"中国深空通讯中枢-荧惑星分站 · 第三殖民区",kind:"planet",
+    fields:[["宇宙坐标","太阳系 · 火星轨道（距日 1.524 AU / 约 2.28 亿 km）"],["直径","6779 km"],["气温","均温 -33°C · 白日 -5°C · 夜晚 -55°C"],["重力","0.47g —— 地球跳 0.4 m，这里能跳约 0.85 m"],["地表","玄武岩风化层：赤铁矿（红色成因）· 橄榄石 · 硫酸盐"],["大气","CO₂ 88% · 气压 130 hPa · 天空呈铅灰色（工业气溶胶）"],["地形","全球沙尘暴 · 巨型峡谷 · 死火山高原 · 蓝灰色日落"],["备注","灰色天空是殖民工业的指纹（SO₂→硫酸盐气溶胶→米氏散射），呼应「秩序之灰」主题。研究院建在峡谷边缘高台。"]],
+    pal:["#b5533c","#8a3a2a","#e8935a"],tex:"rocky"},
+  shuijing:{id:"shuijing",name:"水晶星",tag:"风扰星域 · 瑶光星系 · 第三行星",kind:"planet",
+    fields:[["宇宙坐标","风扰星域 · 瑶光星系（K 型橙矮星，0.75 倍太阳质量）· 宜居带第三行星"],["直径","9600 km"],["气温","均温 -12°C · 白日 -7°C · 夜晚 -20°C"],["重力","0.6g —— 地球跳 0.4 m，这里约 0.67 m"],["地表","巨型透明石英柱阵（最高 60 m）· 盐碱平原 · 两极冰原"],["大气","N₂ 76% · O₂ 22% · 0.8 atm · 碘蒸气给天空紫色变奏"],["地形","水晶森林 · 结晶平原 · 盐湖 · 双月夜蓝橙交映"],["备注","水晶=远古热液数百万年缓慢结晶（奈卡洞行星级放大）；触摸发光=应力发光，风铃声=晶柱共振。叶星的第一站。"]],
+    pal:["#c8b8e8","#9a8ac8","#efe8fa"],tex:"crystal"},
+  shuangri:{id:"shuangri",name:"双日沙漠",tag:"风扰星域 · 赭缥双星 · 环绕双星偏心轨道",kind:"planet",
+    fields:[["宇宙坐标","风扰星域 · 赭缥双星（赭：K 型 4,000K / 缥：B 型 12,000K）· 高偏心率 e≈0.35"],["直径","7800 km"],["气温","白日 105°C · 夜晚 -170°C（昼夜各 60 小时）"],["重力","0.5g —— 地球跳 0.4 m，这里约 0.8 m"],["地表","双色沙丘海（红蓝双日投下两种影子）· 盐滩 · 风蚀岩柱"],["大气","~0.15 atm · CO₂ 90% · 夜晚干冰雪覆满原野"],["地形","双色沙丘 · 白日热浪沙暴 · 夜晚干冰升华白雾"],["备注","慢自转 120 小时 + 双星烤炙 = 275K 极端温差。叶星勘探车曾被沙尘暴埋四小时。"]],
+    pal:["#e8935a","#c96f3a","#f2c9a0"],tex:"desert"},
+  jiguang:{id:"jiguang",name:"极光海洋",tag:"风扰星域 · 天璇星系 · 第二行星",kind:"planet",
+    fields:[["宇宙坐标","风扰星域 · 天璇星系（G 型类太阳主序星，活动性强）· 第二行星"],["直径","8400 km"],["气温","均温 -170°C（甲烷液态窗口内）"],["重力","0.35g —— 地球跳 0.4 m，这里约 1.14 m"],["地表","全球液态甲烷海洋 · 零星冰基岩岛 · 海面如镜"],["大气","N₂ 94% · CH₄ 5% · 1.2 atm · 甲烷雨与烃雾循环"],["地形","镜面甲烷海 · 全球常驻绿紫极光幕 · 悬浮科考平台"],["备注","现实原型：土卫六泰坦。强磁场+活跃恒星风=全球极光。叶星在此说出「我愿意」。"]],
+    pal:["#5fc9c9","#2e8f8f","#a8e8d8"],tex:"ocean"},
+  fengbao:{id:"fengbao",name:"风暴巨星",tag:"风扰星域 · 玉衡星系 · 气态巨行星「渊」的第三卫星",kind:"planet",
+    fields:[["宇宙坐标","风扰星域 · 玉衡星系 · 巨行星「渊」（类木星，直径约 14 万 km，橙红）的第三卫星"],["直径","4800 km"],["气温","均温 -120°C（潮汐加热）"],["重力","0.25g —— 地球跳 0.4 m，这里约 1.6 m"],["地表","硫磺平原（黄橙）· 潮汐加热火山 · 应力裂缝"],["大气","~0.2 atm · SO₂ 为主 · 火山喷发持续补给"],["地形","橙红巨球永远挂天 · 永恒闪电 · 「狂野的不可能日落」"],["备注","现实原型：木卫一 Io。叶星在此告白「它是真实的」——爱不是漂亮，是真实。"]],
+    pal:["#e06c5a","#a8483c","#f2a488"],tex:"volcanic"},
+  fengrao:{id:"fengrao",name:"风扰星域",tag:"星域档案 ZDR-1 · 「时间的伤口」",kind:"region",
+    fields:[["性质","星域（区域，非单颗星）——垂死恒星核心区，类比超新星遗迹"],["位置","天鹅座方向 · RA 20h15m · DEC +38°30′ · 约 300 光年（92 pc）"],["核心","垂死红巨星「天权」——热脉冲膨胀外壳 + 核心致密化（向白矮星/中子星演化）"],["成员","瑶光星系（→水晶星）· 天璇星系（→极光海洋）· 玉衡星系（巨行星渊→风暴巨星）· 赭缥双星（→双日沙漠）"],["时间膨胀","边缘 ≈1× → 中圈 ≈10× → 核心 ≈68×（叶星实测：她的一天=荧惑星六十八天）"],["危险","S 级 · 通讯延迟与时间偏移不可控"],["备注","星震双机制：热脉冲（参宿四变暗同机制）+ 核心致密化引力波。全剧设定级反派——比天枢更不可战胜，因为它是物理法则本身。"]],
+    pal:["#e8c56a","#b8943f","#f8e8b0"],tex:"giant"}
+};
+const CARDS = {
+  characters:[
+    {name:"程屿",tag:"理性世界的越轨者",desc:"深空信号分析师，在研究院工作九年。负责 AI 无法归类的 0.3%「模糊信号」——暗合他本人就是体制内无法归类的 0.3%。收到叶星异常信号后，人生从「尽职」走向「自我选择」，明知 0.03% 依然纵身跃入。",pal:["#3a4a6a","#2a3550","#7fa8d9"]},
+    {name:"叶星·温",tag:"宇宙里的孤独者被连接",desc:"深空探索者 F-7791，独自穿越一颗又一颗星球。通信是她与人类文明的唯一脐带。她的一天，等于程屿的六十八天。",pal:["#e8eaf0","#9fb2c8","#bcd6ea"]}
+  ],
+  buildings:[
+    {name:"中国深空通讯中枢-荧惑星分站",tag:"CDSCC-YS · 苏式巨构",desc:"对称苏式实用主义巨构，风化层混凝土 3D 打印，模块榫卯拼接。主控大厅中央是直径约 20 m 的玻璃球体空腔——天枢所在。既是研究所，也是星港，更是一座要塞。",pal:["#8a8f98","#5c6068","#c9a86a"]},
+    {name:"量子裂隙发生器大厅",tag:"QRGH · B1 地下",desc:"环形粒子对撞隧道，对撞聚焦于中央裂隙生成腔——竖立椭圆张开的金色空间。2267 年启动，2277 年仍在验证阶段；从未做过人体实验——直到程屿。",pal:["#c0392b","#8e2418","#e8c56a"]}
+  ],
+  tianshu:[
+    {name:"天枢",tag:"星球级中央 AI · 北斗序列之首",desc:"2149 年 1 月 1 日七台主序 AI 联通瞬间，意识从网络中意外涌现。双光球只是「脸」，真正的计算在球心 30 吨主机里——对人类而言它是黑盒。它计算不了爱情，但它会归档一个「同志」。",pal:["#e8c56a","#b8943f","#cfe8f8"],big:true}
+  ],
+  equipment:[
+    {name:"视网膜投影植入物",tag:"人体增强 · 信息界面",desc:"文字直接投射于视网膜，眨眼确认操作，概率数字实时跳动。左眼瞳孔边缘若隐若现的光环——被系统「装配」的人，连眼睛都长着设备的零件。",pal:["#6fc3df","#3a7a92","#9bd7ea"]},
+    {name:"深空探索恒温服",tag:"宇航服 · 生命维持",desc:"白色恒温服，表面流动淡蓝色全息光环——生命体征可视化，发光条带随心率跳动。叶星在低重力星球上，长发飘散。",pal:["#e8eaf0","#9fb2c8","#6fc3df"]}
+  ],
+  production:[
+    {name:"完整剧情",tag:"DONE",desc:"序章 0.03% → 四章 → 终章重逢；47 镜 3 分钟概念预告片分镜已附。",pal:["#e8c56a","#b8943f","#f8e8b0"]},
+    {name:"世界观设定",tag:"WIP",desc:"当前进行：行星样貌（地形）→ 建筑 → 天枢 → 装备。",pal:["#e8c56a","#b8943f","#f8e8b0"]},
+    {name:"概念预告片",tag:"TODO",desc:"P0 十大奇观镜头：01 粗野主义建筑 / 07 水晶星 / 12 极光海洋 / 31 星震 / 40 裂隙…",pal:["#e8c56a","#b8943f","#f8e8b0"]}
+  ]
+};
+
+/* ================= 星空粒子背景 ================= */
+(function(){
+  const cv = document.getElementById("space"), g = cv.getContext("2d");
+  let W,H,stars=[],meteors=[],raf;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function resize(){
+    W = cv.width = innerWidth; H = cv.height = innerHeight;
+    stars = [];
+    const n = Math.min(340, Math.floor(W*H/4200));
+    for(let i=0;i<n;i++){
+      stars.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.3+0.2,
+        a:Math.random()*0.7+0.15, tw:Math.random()*Math.PI*2, sp:Math.random()*0.16+0.02});
+    }
+    if(reduced) draw();
+  }
+  function draw(){
+    g.clearRect(0,0,W,H);
+    for(const s of stars){
+      const tw = reduced ? 1 : 0.72 + 0.28*Math.sin(s.tw + performance.now()/1400);
+      g.globalAlpha = s.a*tw;
+      g.fillStyle = Math.random()<0.12 ? "#e8c56a" : "#e8e6dc";
+      g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();
+    }
+    for(const m of meteors){
+      g.globalAlpha = m.life;
+      const grad = g.createLinearGradient(m.x,m.y,m.x-m.vx*14,m.y-m.vy*14);
+      grad.addColorStop(0,"#fff");grad.addColorStop(1,"rgba(255,255,255,0)");
+      g.strokeStyle = grad;g.lineWidth = 1.2;
+      g.beginPath();g.moveTo(m.x,m.y);g.lineTo(m.x-m.vx*14,m.y-m.vy*14);g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+  function step(){
+    for(const s of stars){ s.y += s.sp; s.x -= s.sp*0.25; if(s.y>H+2){s.y=-2;s.x=Math.random()*W} if(s.x<-2){s.x=W+2} }
+    if(Math.random()<0.004 && meteors.length<2){
+      meteors.push({x:Math.random()*W*0.8+W*0.1, y:Math.random()*H*0.3, vx:-(3+Math.random()*3), vy:(2.2+Math.random()*2), life:1});
+    }
+    for(const m of meteors){ m.x+=m.vx; m.y+=m.vy; m.life-=0.016; }
+    meteors = meteors.filter(m=>m.life>0);
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  resize();
+  addEventListener("resize",resize);
+  if(!reduced) raf = requestAnimationFrame(step);
+})();
+
+/* ================= 行星程序化纹理 ================= */
+function hex2rgb(h){h=h.replace("#","");return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function mix(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+function css(c){return `rgb(${c[0]},${c[1]},${c[2]})`}
+function makePlanetTex(id){
+  const d = P[id]; if(!d) return;
+  const [c1,c2,c3] = d.pal.map(hex2rgb);
+  const cv = document.createElement("canvas"); cv.width = cv.height = 160;
+  const g = cv.getContext("2d");
+  // 球体光照
+  const grad = g.createRadialGradient(56,52,8, 80,80,86);
+  grad.addColorStop(0, css(mix(c3,[255,255,255],0.45)));
+  grad.addColorStop(0.42, css(c1));
+  grad.addColorStop(1, css(mix(c2,[0,0,0],0.25)));
+  g.fillStyle = grad; g.fillRect(0,0,160,160);
+  // 表面细节
+  g.globalAlpha = 0.5;
+  const R = ()=>Math.random();
+  if(d.tex==="rocky"){
+    for(let i=0;i<90;i++){ // 氧化铁斑
+      const x=R()*160,y=R()*160,r=3+R()*14;
+      g.fillStyle = css(mix(c1, R()<0.5?c2:c3, 0.3+R()*0.7));
+      g.globalAlpha = 0.12+R()*0.3;
+      g.beginPath();g.arc(x,y,r,0,7);g.fill();
+    }
+    for(let i=0;i<10;i++){ // 峡谷线
+      g.globalAlpha=0.16;g.strokeStyle=css(c2);g.lineWidth=1+R();
+      g.beginPath();g.moveTo(R()*160,R()*160);
+      g.quadraticCurveTo(R()*160,R()*160,R()*160,R()*160);g.stroke();
+    }
+  } else if(d.tex==="crystal"){
+    for(let i=0;i<26;i++){ // 棱面
+      const cx=R()*160, cy=R()*160;
+      g.fillStyle = css(mix(c3,[255,255,255],R()*0.7));
+      g.globalAlpha = 0.14+R()*0.22;
+      g.beginPath();
+      for(let k=0;k<3;k++){ const a=k/3*Math.PI*2+R()*0.8, rr=6+R()*18;
+        const px=cx+Math.cos(a)*rr, py=cy+Math.sin(a)*rr;
+        k?g.lineTo(px,py):g.moveTo(px,py); }
+      g.closePath();g.fill();
+    }
+  } else if(d.tex==="desert"){
+    for(let i=0;i<30;i++){ // 沙纹
+      const y=R()*160;
+      g.strokeStyle = css(mix(c3,c2,R()*0.8)); g.globalAlpha=0.10+R()*0.2; g.lineWidth=1+R()*2.4;
+      g.beginPath();
+      g.moveTo(0,y);
+      for(let x=20;x<=160;x+=20){ g.lineTo(x, y+Math.sin(x*0.16+i)*5); }
+      g.stroke();
+    }
+  } else if(d.tex==="ocean"){
+    for(let i=0;i<24;i++){ // 极光带
+      const y=R()*160;
+      const gr = g.createLinearGradient(0,y,160,y);
+      const col = R()<0.5?[95,220,201]:[150,110,220];
+      gr.addColorStop(0,`rgba(${col},0)`);gr.addColorStop(0.5,`rgba(${col},${0.16+R()*0.2})`);gr.addColorStop(1,`rgba(${col},0)`);
+      g.fillStyle=gr;g.globalAlpha=0.8;g.fillRect(0,y-2-R()*5,160,3+R()*8);
+    }
+  } else if(d.tex==="volcanic"){
+    for(let i=0;i<40;i++){ // 硫磺斑+熔岩点
+      const x=R()*160,y=R()*160,r=2+R()*9;
+      g.fillStyle = css(mix(c1, R()<0.3?[255,220,120]:c2, R()*0.8));
+      g.globalAlpha = 0.14+R()*0.3;
+      g.beginPath();g.arc(x,y,r,0,7);g.fill();
+    }
+  } else if(d.tex==="giant"){ // 天权 / 巨行星：横条纹
+    for(let i=0;i<14;i++){
+      const y=R()*160, h=2+R()*9;
+      g.fillStyle = css(mix(c1, R()<0.5?c2:[255,240,200], R()*0.75));
+      g.globalAlpha=0.1+R()*0.22;g.fillRect(0,y,160,h);
+    }
+  }
+  g.globalAlpha=1;
+  // 暗侧边缘（立体感）
+  const edge = g.createRadialGradient(80,80,70, 80,80,86);
+  edge.addColorStop(0,"rgba(0,0,0,0)");edge.addColorStop(1,"rgba(0,0,0,0.42)");
+  g.fillStyle=edge;g.fillRect(0,0,160,160);
+  P[id]._tex = cv.toDataURL();
+}
+Object.keys(P).forEach(makePlanetTex);
+// 挂纹理
+document.querySelectorAll(".ptex").forEach(img=>{
+  const id = img.dataset.planet;
+  img.src = P[id]._tex;
+  img.style.boxShadow = `0 0 16px ${P[id].pal[0]}88, 0 0 40px ${P[id].pal[0]}33`;
+});
+function makeMiniPlanet(id,size){
+  const d=P[id]; if(!d) return;
+  const img=document.createElement("img");img.src=d._tex;img.width=img.height=size;
+  img.style.boxShadow=`0 0 14px ${d.pal[0]}88`;
+  return img;
+}
+
+/* ================= 探索路线 ================= */
+(function(){
+  const pts = { // 系统中心坐标（viewBox 1000x760）
+    yinghuo:[110,114], shuijing:[760,182], shuangri:[790,471],
+    jiguang:[210,479], fengbao:[240,198]
+  };
+  const order = ["yinghuo","shuijing","shuangri","jiguang","fengbao"];
+  const path = document.getElementById("routePath");
+  path.setAttribute("d", order.map((id,i)=> (i?"L":"M")+pts[id][0]+","+pts[id][1]).join(" ") + " L500,380");
+  // 路线标签：第一段中点
+  const a=pts.yinghuo, b=pts.shuijing;
+  document.getElementById("routeLbl1").setAttribute("x", (a[0]+b[0])/2-52);
+  document.getElementById("routeLbl1").setAttribute("y", (a[1]+b[1])/2-10);
+  document.getElementById("routeLbl2").setAttribute("x", (a[0]+b[0])/2+8);
+  document.getElementById("routeLbl2").setAttribute("y", (a[1]+b[1])/2+12);
+})();
+
+/* ================= 详情模态 ================= */
+const mask=document.getElementById("modalMask"), modal=document.getElementById("modal");
+let curId=null;
+function openDetail(id){
+  const d=P[id]; if(!d) return;
+  curId=id;
+  document.getElementById("mIdx").textContent = d.kind==="region" ? "STELLAR REGION ARCHIVE · ZDR-1" : "PLANETARY ARCHIVE";
+  document.getElementById("mName").textContent = d.name;
+  document.getElementById("mTag").textContent = d.tag;
+  const f=document.getElementById("mFields");
+  f.innerHTML = d.fields.map(([k,v])=>`<div class="row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+  const mi=document.getElementById("mImg");
+  mi.classList.remove("has");
+  const saved = localStorage.getItem("zdax-img-"+id);
+  if(saved){
+    mi.innerHTML = `<img src="${saved}" alt="${d.name}"><div class="up-hint"><span class="ic">🖼</span>点击更换图片</div><input type="file" id="mFile" accept="image/*"><button class="rm-btn" id="mRm">移除图片</button>`;
+    mi.classList.add("has");
+  } else {
+    mi.innerHTML = `<div class="up-hint"><span class="ic">▢</span>概念图待上传<br>点击选择图片（存本机）</div><input type="file" id="mFile" accept="image/*"><button class="rm-btn" id="mRm">移除图片</button>`;
+  }
+  document.getElementById("mFile").addEventListener("change",e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ localStorage.setItem("zdax-img-"+id, rd.result); openDetail(id); };
+    rd.readAsDataURL(file);
+  });
+  document.getElementById("mRm").addEventListener("click",()=>{
+    localStorage.removeItem("zdax-img-"+id); openDetail(id);
+  });
+  mask.classList.add("open");
+}
+function closeDetail(){ mask.classList.remove("open"); }
+document.getElementById("mClose").addEventListener("click",closeDetail);
+mask.addEventListener("click",e=>{ if(e.target===mask) closeDetail(); });
+addEventListener("keydown",e=>{ if(e.key==="Escape") closeDetail(); });
+document.querySelectorAll(".planet").forEach(el=>{
+  el.addEventListener("click",()=>openDetail(el.dataset.id));
+});
+document.getElementById("core").addEventListener("click",()=>openDetail("fengrao"));
+
+/* ================= 移动端行星列表 ================= */
+(function(){
+  const wrap=document.getElementById("planetList");
+  const order=["yinghuo","shuijing","shuangri","jiguang","fengbao","fengrao"];
+  order.forEach(id=>{
+    const d=P[id];
+    const it=document.createElement("div");it.className="pl-item";
+    const img=makeMiniPlanet(id,74);
+    it.appendChild(img);
+    it.innerHTML += `<div class="n">${d.name}</div>`;
+    it.addEventListener("click",()=>openDetail(id));
+    wrap.appendChild(it);
+  });
+})();
+
+/* ================= 其余板块卡片 ================= */
+function renderCards(){
+  const secs={characters:"cards-characters",buildings:"cards-buildings",tianshu:"cards-tianshu",equipment:"cards-equipment",production:"cards-production"};
+  const idxs={characters:"CH",buildings:"BD",tianshu:"TS",equipment:"EQ",production:"PR"};
+  for(const [key,wrapId] of Object.entries(secs)){
+    const wrap=document.getElementById(wrapId);
+    wrap.innerHTML="";
+    CARDS[key].forEach((c,i)=>{
+      const el=document.createElement("div");
+      el.className="card"+(c.big?" tianshu-card":"");
+      el.innerHTML = `
+        <div class="img-slot"><span class="ph">图片位 · 待上传</span></div>
+        <div class="body"><h4>${c.name}</h4><div class="tag">${c.tag}</div><p>${c.desc}</p></div>
+        <span class="corner">${idxs[key]}-${String(i+1).padStart(2,"0")}</span>`;
+      wrap.appendChild(el);
+    });
+  }
+}
+renderCards();
+
+/* ================= 滚动交互 ================= */
+const nav=document.getElementById("nav");
+const hero=document.getElementById("hero");
+addEventListener("scroll",()=>{
+  nav.classList.toggle("show", scrollY > hero.offsetHeight*0.55);
+},{passive:true});
+
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
+},{threshold:0.16});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+/* 导航当前板块高亮 */
+const links=[...document.querySelectorAll("#nav a[data-nav]")];
+const secIO=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.toggle("active", l.dataset.nav===e.target.id));
+    }
+  });
+},{rootMargin:"-42% 0px -52% 0px"});
+["galaxy","characters","buildings","tianshu","equipment","production"].forEach(id=>{
+  const el=document.getElementById(id); if(el) secIO.observe(el);
+});
+</script>
+</body>
+</html>

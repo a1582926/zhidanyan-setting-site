@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《致：黯淡星》官方设定站 · v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   星图档案 · 设计系统 v1 —— 数据源 data/data.js（window.ZDAX_DATA）
+   ============================================================ */
+:root{
+  --ink:#07090f;          /* 深空墨黑 */
+  --deep:#0b1220;         /* 星云深蓝黑 */
+  --gold:#e8c56a;         /* 档案纸金（天权/裂隙/主题色）*/
+  --gold-line:#d8b86a;    /* 描金星图线 */
+  --gold-dim:rgba(232,197,106,.30);
+  --text:#e8e6dc;         /* 星雾白 */
+  --text-sub:#8a93a8;     /* 灰蓝次级文字 */
+  --line:rgba(216,184,106,.16);
+  --route:#7fd9a8;        /* 叶星探索路线绿 */
+  --danger:#e06c5a;
+  --serif:"Noto Serif SC","SimSun","STSong",Georgia,serif;
+  --mono:Consolas,"Courier New",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--serif);
+  overflow-x:hidden;
+}
+
+/* ---------- 星空背景 ---------- */
+#space{position:fixed;inset:0;z-index:0;pointer-events:none}
+.nebula{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(38% 30% at 78% 18%, rgba(64,80,140,.16), transparent 70%),
+    radial-gradient(30% 26% at 16% 70%, rgba(140,80,64,.12), transparent 70%),
+    radial-gradient(22% 18% at 55% 88%, rgba(120,90,180,.10), transparent 70%);
+}
+
+/* ---------- 分类导航（下滑浮现） ---------- */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:center;gap:6px;
+  padding:14px 20px;
+  background:linear-gradient(180deg, rgba(7,9,15,.92), rgba(7,9,15,.72) 80%, transparent);
+  backdrop-filter:blur(8px);
+  transform:translateY(-110%);
+  transition:transform .6s cubic-bezier(.22,.8,.24,1);
+}
+#nav.show{transform:translateY(0)}
+#nav a{
+  color:var(--text-sub);text-decoration:none;font-size:14px;
+  padding:7px 16px;border:1px solid transparent;border-radius:2px;
+  letter-spacing:.12em;transition:all .35s;white-space:nowrap;
+}
+#nav a:hover{color:var(--gold);border-color:var(--gold-dim);background:rgba(232,197,106,.06)}
+#nav a.active{color:var(--gold);border-color:var(--gold-dim)}
+#nav .nav-home{margin-right:14px;color:var(--gold);font-weight:600;letter-spacing:.2em}
+
+/* ---------- 封面 ---------- */
+#hero{
+  position:relative;z-index:1;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:0 20px;
+}
+.hero-fade{opacity:0;transform:translateY(26px);animation:heroIn 1.2s cubic-bezier(.22,.8,.24,1) forwards}
+.hero-fade.d1{animation-delay:.15s}.hero-fade.d2{animation-delay:.42s}
+.hero-fade.d3{animation-delay:.7s}.hero-fade.d4{animation-delay:1s}
+@keyframes heroIn{to{opacity:1;transform:translateY(0)}}
+.hero-star{
+  font-family:var(--mono);font-size:12px;letter-spacing:.5em;color:var(--gold);
+  margin-bottom:26px;text-transform:uppercase;
+}
+.hero-star::before,.hero-star::after{content:"✦";margin:0 18px;color:var(--gold-line);font-size:10px}
+#hero h1{
+  font-size:clamp(52px,9vw,104px);font-weight:900;letter-spacing:.14em;
+  color:var(--text);text-shadow:0 0 46px rgba(232,197,106,.22);
+}
+#hero .tagline{
+  margin-top:22px;font-size:clamp(17px,2.4vw,24px);color:var(--gold);
+  letter-spacing:.3em;font-weight:400;
+}
+#hero .sub{
+  margin-top:14px;font-size:13px;color:var(--text-sub);letter-spacing:.18em;
+}
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-sub);font-size:12px;letter-spacing:.3em;
+  animation:heroIn 1.2s 1.3s cubic-bezier(.22,.8,.24,1) both;
+}
+.scroll-hint .arrow{
+  width:22px;height:36px;border:1.5px solid var(--gold-dim);border-radius:12px;
+  display:flex;justify-content:center;padding-top:7px;
+}
+.scroll-hint .arrow i{
+  width:3px;height:8px;border-radius:2px;background:var(--gold);
+  animation:drip 1.8s ease-in-out infinite;
+}
+@keyframes drip{0%{transform:translateY(0);opacity:1}70%{transform:translateY(12px);opacity:0}100%{transform:translateY(0);opacity:0}}
+
+/* ---------- 板块通用 ---------- */
+section.panel{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:110px 24px 60px}
+.panel-head{text-align:center;margin-bottom:56px}
+.panel-head .idx{font-family:var(--mono);font-size:12px;color:var(--gold);letter-spacing:.5em;display:block;margin-bottom:12px}
+.panel-head h2{font-size:clamp(28px,4vw,44px);letter-spacing:.2em;font-weight:900}
+.panel-head .rule{width:1px;height:44px;margin:22px auto 0;background:linear-gradient(var(--gold),transparent)}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.22,.8,.24,1),transform .9s cubic-bezier(.22,.8,.24,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ============================================================
+   星系板块 · 星图
+   ============================================================ */
+#galaxy{max-width:1320px}
+.starmap-wrap{position:relative}
+#starmap{
+  position:relative;width:min(1080px,100%);aspect-ratio:1000/760;margin:0 auto;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(46% 40% at 50% 50%, rgba(232,197,106,.07), transparent 70%),
+    radial-gradient(60% 55% at 30% 30%, rgba(64,80,140,.10), transparent 70%),
+    var(--deep);
+  overflow:hidden;
+}
+#starmap::before{
+  content:"ZDR-1 · 风扰星域 · 天鹅座方向 · J2000.0";position:absolute;top:10px;left:14px;
+  font-family:var(--mono);font-size:11px;color:var(--text-sub);letter-spacing:.14em;z-index:5;
+}
+#starmap::after{content:"RA 20h15m · DEC +38°30′";position:absolute;bottom:10px;right:14px;
+  font-family:var(--mono);font-size:11px;color:var(--text-sub);letter-spacing:.14em;z-index:5;}
+#starmap svg{position:absolute;inset:0;width:100%;height:100%}
+#starmap svg .ring{fill:none;stroke:var(--gold-dim);stroke-width:1;stroke-dasharray:3 7}
+#starmap svg .ring-lbl{fill:var(--text-sub);font-family:var(--mono);font-size:11px;letter-spacing:.15em}
+#starmap svg .route{
+  fill:none;stroke:var(--route);stroke-width:1.6;stroke-dasharray:7 6;opacity:.75;
+  animation:routeFlow 3.4s linear infinite;
+}
+@keyframes routeFlow{to{stroke-dashoffset:-13}}
+#starmap svg .route-lbl{fill:var(--route);font-family:var(--mono);font-size:11px}
+
+/* 天权核心 */
+#core{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:150px;height:150px;z-index:4;cursor:pointer;
+}
+#core .ball{
+  position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%, #ffe9a8, var(--gold) 34%, #c96f3a 68%, #7a2f22 100%);
+  box-shadow:0 0 60px rgba(232,197,106,.55), 0 0 140px rgba(201,111,58,.35), inset -14px -18px 40px rgba(60,15,10,.75);
+  animation:corePulse 5s ease-in-out infinite;
+}
+#core .fade-rim{position:absolute;inset:-16px;border-radius:50%;border:1px dashed rgba(232,197,106,.4);animation:spin 60s linear infinite}
+@keyframes corePulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.045);filter:brightness(1.14)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+#core .name{
+  position:absolute;left:50%;bottom:-34px;transform:translateX(-50%);
+  font-size:15px;letter-spacing:.3em;color:var(--gold);white-space:nowrap;
+  text-shadow:0 0 14px rgba(232,197,106,.5);
+}
+#core .sub{position:absolute;left:50%;bottom:-56px;transform:translateX(-50%);
+  font-size:11px;color:var(--text-sub);letter-spacing:.18em;white-space:nowrap;font-family:var(--mono)}
+
+/* 恒星系统节点 */
+.sys{position:absolute;z-index:3;transform:translate(-50%,-50%)}
+.sys-star{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+.sys-star-lbl{
+  position:absolute;left:50%;top:calc(50% + 20px);transform:translateX(-50%);
+  font-size:11px;color:var(--text-sub);letter-spacing:.15em;white-space:nowrap;
+  opacity:0;transition:opacity .4s;
+}
+.sys:hover .sys-star-lbl{opacity:1}
+.orbit{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border:1px dashed rgba(216,184,106,.25);border-radius:50%;
+}
+.planet-wrap{
+  position:absolute;left:50%;top:50%;width:100%;height:100%;
+  animation:orbitSpin var(--period,24s) linear infinite;
+}
+@keyframes orbitSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.planet{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);cursor:pointer;z-index:6}
+.planet img{
+  display:block;border-radius:50%;object-fit:cover;
+  transition:transform .45s cubic-bezier(.22,.8,.24,1), box-shadow .45s;
+}
+.planet .glow{
+  position:absolute;inset:-30%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle, var(--glow,rgba(232,197,106,.28)), transparent 68%);
+  opacity:.55;transition:opacity .45s;
+}
+.planet .name{
+  position:absolute;left:50%;top:calc(100% + 14px);transform:translate(-50%,6px);
+  font-size:14px;letter-spacing:.24em;white-space:nowrap;color:var(--text);
+  text-shadow:0 0 12px rgba(0,0,0,.9);opacity:0;transition:opacity .4s,transform .4s;
+}
+.planet .name small{display:block;text-align:center;font-size:10px;color:var(--text-sub);letter-spacing:.1em;margin-top:3px}
+.planet:hover img{transform:translate(-50%,-50%) scale(1.22)}
+.planet:hover .glow{opacity:1}
+.planet:hover .name{opacity:1;transform:translate(-50%,0)}
+
+/* 移动端：星图缩为列表 */
+.planet-list{display:none}
+
+/* ---------- 风扰星域档案条 ---------- */
+.region-card{
+  max-width:1080px;margin:34px auto 0;border:1px solid var(--line);
+  border-left:3px solid var(--gold);background:rgba(11,18,32,.6);
+  padding:26px 32px;position:relative;cursor:pointer;
+  transition:border-color .4s, box-shadow .4s;
+}
+.region-card:hover{border-color:var(--gold-dim);box-shadow:0 0 26px rgba(232,197,106,.08)}
+.region-card h3{font-size:20px;letter-spacing:.26em;color:var(--gold);margin-bottom:4px}
+.region-card .rc-sub{font-family:var(--mono);font-size:12px;color:var(--text-sub);letter-spacing:.14em;margin-bottom:16px}
+.region-card .rc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.region-card .rc-item .k{font-size:11px;color:var(--text-sub);letter-spacing:.16em;margin-bottom:5px}
+.region-card .rc-item .v{font-size:14px;line-height:1.7;color:var(--text)}
+.region-card .rc-item .rc-danger{color:var(--danger)}
+
+/* ---------- 其余板块 · 卡片 ---------- */
+.cards{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:26px;
+}
+.card{
+  border:1px solid var(--line);background:rgba(11,18,32,.55);
+  overflow:hidden;cursor:pointer;position:relative;
+  transition:transform .5s cubic-bezier(.22,.8,.24,1), border-color .5s, box-shadow .5s;
+}
+.card:hover{transform:translateY(-7px);border-color:var(--gold-dim);box-shadow:0 16px 44px rgba(0,0,0,.5), 0 0 26px rgba(232,197,106,.08)}
+.card .img-slot{
+  height:172px;border-bottom:1px solid var(--line);position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:
+    repeating-linear-gradient(45deg, rgba(216,184,106,.035) 0 10px, transparent 10px 20px),
+    radial-gradient(60% 70% at 50% 40%, rgba(64,80,140,.14), transparent 70%);
+}
+.card .img-slot .ph{
+  font-size:11px;color:var(--text-sub);letter-spacing:.22em;
+  border:1px dashed var(--gold-dim);border-radius:2px;padding:9px 16px;
+  background:rgba(7,9,15,.5);
+}
+.card .img-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:20px 22px 24px}
+.card .body h4{font-size:18px;letter-spacing:.14em;margin-bottom:8px}
+.card .body .tag{font-size:12px;color:var(--gold);letter-spacing:.12em;margin-bottom:12px;font-family:var(--mono)}
+.card .body p{font-size:13.5px;color:var(--text-sub);line-height:1.9;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.card .corner{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:11px;color:var(--gold-dim);letter-spacing:.2em}
+.card.tianshu-card{grid-column:1/-1;display:grid;grid-template-columns:340px 1fr}
+.card.tianshu-card .img-slot{height:100%;border-bottom:none;border-right:1px solid var(--line);min-height:240px}
+
+/* ---------- 详情模态 ---------- */
+.modal-mask{
+  position:fixed;inset:0;z-index:100;background:rgba(3,4,8,.78);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.modal-mask.open{opacity:1;pointer-events:auto}
+.modal{
+  width:min(920px,100%);max-height:90vh;overflow-y:auto;
+  background:linear-gradient(180deg,#0c1322,#0a0f1a);
+  border:1px solid var(--gold-dim);box-shadow:0 30px 90px rgba(0,0,0,.75), 0 0 50px rgba(232,197,106,.08);
+  transform:translateY(26px);transition:transform .5s cubic-bezier(.22,.8,.24,1);
+  position:relative;
+}
+.modal-mask.open .modal{transform:translateY(0)}
+.modal .m-close{
+  position:absolute;top:14px;right:18px;z-index:5;background:none;border:none;cursor:pointer;
+  color:var(--text-sub);font-size:24px;line-height:1;transition:color .3s;
+}
+.modal .m-close:hover{color:var(--gold)}
+.modal .m-edit{
+  position:absolute;top:16px;right:56px;z-index:5;background:none;cursor:pointer;
+  color:var(--text-sub);font-size:12px;letter-spacing:.14em;
+  border:1px solid var(--line);padding:5px 14px;transition:all .3s;
+}
+.modal .m-edit:hover{color:var(--gold);border-color:var(--gold-dim)}
+.modal .m-head{padding:34px 38px 0}
+.modal .m-head .m-idx{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.4em}
+.modal .m-head h3{font-size:30px;letter-spacing:.18em;margin:8px 0 6px}
+.modal .m-head .m-tag{font-size:13px;color:var(--text-sub);letter-spacing:.1em;line-height:1.8}
+.modal .m-body{padding:26px 38px 38px;display:grid;grid-template-columns:minmax(220px,280px) 1fr;gap:30px}
+.modal .m-img{
+  border:1px dashed var(--gold-dim);min-height:220px;border-radius:2px;position:relative;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:radial-gradient(60% 70% at 50% 40%, rgba(64,80,140,.14), transparent 70%);
+  align-self:start;
+}
+.modal .m-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.modal .m-img .up-hint{
+  position:relative;z-index:2;text-align:center;color:var(--text-sub);font-size:12px;letter-spacing:.14em;
+}
+.modal .m-img .up-hint .ic{font-size:26px;color:var(--gold-dim);display:block;margin-bottom:8px}
+.modal .m-img input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3}
+.modal .m-img .rm-btn{position:absolute;bottom:8px;right:8px;z-index:4;font-size:11px;color:var(--text-sub);
+  background:rgba(7,9,15,.8);border:1px solid var(--line);padding:4px 10px;cursor:pointer;display:none}
+.modal .m-img.has .rm-btn{display:block}
+.modal .m-img.has .up-hint{opacity:0;transition:opacity .3s}
+.modal .m-img.has:hover .up-hint{opacity:1;background:rgba(7,9,15,.55);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.modal .m-fields{font-size:14px;line-height:1.9}
+.modal .m-fields .row{margin-bottom:16px}
+.modal .m-fields .k{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.2em;display:block;margin-bottom:4px}
+.modal .m-fields .v{color:var(--text);white-space:pre-wrap}
+.modal .m-fields .v.sub{color:var(--text-sub);font-size:13.5px}
+
+/* 编辑模式 */
+.modal.edit-mode .m-body{display:none}
+.modal .m-editform{display:none;padding:26px 38px 38px}
+.modal.edit-mode .m-editform{display:block}
+.modal .m-editform label{display:block;margin-bottom:16px}
+.modal .m-editform .k{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.2em;display:block;margin-bottom:6px}
+.modal .m-editform input,.modal .m-editform textarea{
+  width:100%;background:rgba(7,9,15,.6);border:1px solid var(--line);color:var(--text);
+  font-family:var(--serif);font-size:13.5px;padding:9px 12px;line-height:1.7;resize:vertical;
+}
+.modal .m-editform input:focus,.modal .m-editform textarea:focus{outline:none;border-color:var(--gold-dim)}
+.modal .m-editform .ef-actions{display:flex;gap:12px;margin-top:8px}
+.modal .m-editform button{
+  background:none;border:1px solid var(--gold-dim);color:var(--gold);cursor:pointer;
+  font-size:13px;letter-spacing:.16em;padding:10px 26px;transition:all .3s;font-family:var(--serif);
+}
+.modal .m-editform button:hover{background:rgba(232,197,106,.1)}
+.modal .m-editform button.ghost{border-color:var(--line);color:var(--text-sub)}
+.modal .m-editform button.ghost:hover{color:var(--text);border-color:var(--text-sub)}
+
+/* ---------- 页脚 ---------- */
+footer{position:relative;z-index:1;text-align:center;padding:70px 20px 50px;border-top:1px solid var(--line)}
+footer .ft-title{font-size:22px;letter-spacing:.4em;color:var(--gold)}
+footer .ft-line{margin-top:10px;font-size:13px;color:var(--text-sub);letter-spacing:.2em}
+footer .ft-meta{margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--text-sub)}
+footer .ft-actions{margin-top:20px;display:flex;gap:14px;justify-content:center}
+footer .ft-actions button{
+  background:none;border:1px solid var(--line);color:var(--text-sub);cursor:pointer;
+  font-size:12px;letter-spacing:.16em;padding:8px 20px;transition:all .3s;font-family:var(--serif);
+}
+footer .ft-actions button:hover{color:var(--gold);border-color:var(--gold-dim)}
+#ftDirty{color:var(--gold);font-size:11px;font-family:var(--mono);margin-top:10px;letter-spacing:.14em}
+
+@media (max-width:820px){
+  #starmap{display:none}
+  .planet-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;max-width:720px;margin:0 auto}
+  .planet-list .pl-item{border:1px solid var(--line);background:rgba(11,18,32,.55);padding:18px;text-align:center;cursor:pointer;transition:border-color .4s,transform .4s}
+  .planet-list .pl-item:hover{border-color:var(--gold-dim);transform:translateY(-4px)}
+  .planet-list .pl-item img{width:74px;height:74px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;box-shadow:0 0 24px var(--glow,rgba(232,197,106,.25))}
+  .planet-list .pl-item .n{font-size:14px;letter-spacing:.16em}
+  .card.tianshu-card{grid-template-columns:1fr}
+  .modal .m-body{grid-template-columns:1fr}
+  .region-card .rc-grid{grid-template-columns:repeat(2,1fr)}
+  #nav{gap:2px;overflow-x:auto}
+  #nav a{padding:7px 10px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .hero-fade{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="space"></canvas>
+<div class="nebula"></div>
+
+<!-- 分类导航 -->
+<nav id="nav">
+  <a class="nav-home" href="#hero">致：黯淡星</a>
+  <a href="#galaxy" data-nav="galaxy">星系</a>
+  <a href="#characters" data-nav="characters">角色档案</a>
+  <a href="#buildings" data-nav="buildings">建筑设施</a>
+  <a href="#tianshu" data-nav="tianshu">天枢系统</a>
+  <a href="#equipment" data-nav="equipment">装备</a>
+  <a href="#production" data-nav="production">制作进度</a>
+</nav>
+
+<!-- 封面 -->
+<header id="hero">
+  <div class="hero-star hero-fade d1">OFFICIAL SETTING ARCHIVE · 2277</div>
+  <h1 class="hero-fade d2">致：黯淡星</h1>
+  <div class="tagline hero-fade d3" id="heroTagline">因为爱不是等待，是翻越。</div>
+  <div class="sub hero-fade d4" id="heroSub">AI 科幻改编版 · 世界观设定档案</div>
+  <div class="scroll-hint">
+    <span>下滑探索</span>
+    <div class="arrow"><i></i></div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= 星系板块 ================= -->
+  <section class="panel" id="galaxy">
+    <div class="panel-head reveal">
+      <span class="idx">SECTION 01 · GALAXY</span>
+      <h2>星系</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="starmap-wrap reveal">
+      <div id="starmap">
+        <svg viewBox="0 0 1000 760" preserveAspectRatio="xMidYMid meet">
+          <circle class="ring" cx="500" cy="380" r="122"/>
+          <circle class="ring" cx="500" cy="380" r="248"/>
+          <circle class="ring" cx="500" cy="380" r="354"/>
+          <text class="ring-lbl" x="500" y="252">×68 核心区</text>
+          <text class="ring-lbl" x="500" y="126">×10 中圈</text>
+          <text class="ring-lbl" x="500" y="16">×1 边缘</text>
+          <path class="route" id="routePath" d=""/>
+          <text class="route-lbl" id="routeLbl1" x="0" y="0">叶星探索路线</text>
+          <text class="route-lbl" id="routeLbl2" x="0" y="0">· 300 光年 ·</text>
+        </svg>
+
+        <div id="core" title="天权 · 风扰星域核心">
+          <div class="fade-rim"></div>
+          <div class="ball"></div>
+          <div class="name">天 权</div>
+          <div class="sub">垂死红巨星 · 风扰星域核心</div>
+        </div>
+        <!-- 恒星系统节点由 JS 按 data.js 生成 -->
+        <div id="sysMount"></div>
+      </div>
+
+      <div class="region-card reveal" id="regionCard"></div>
+    </div>
+
+    <div class="planet-list" id="planetList"></div>
+  </section>
+
+  <!-- ================= 其余板块 ================= -->
+  <section class="panel" id="characters">
+    <div class="panel-head reveal"><span class="idx">SECTION 02 · CHARACTERS</span><h2>角色档案</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-characters"></div>
+  </section>
+
+  <section class="panel" id="buildings">
+    <div class="panel-head reveal"><span class="idx">SECTION 03 · BUILDINGS</span><h2>建筑设施</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-buildings"></div>
+  </section>
+
+  <section class="panel" id="tianshu">
+    <div class="panel-head reveal"><span class="idx">SECTION 04 · TIANSHU</span><h2>天枢系统</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-tianshu"></div>
+  </section>
+
+  <section class="panel" id="equipment">
+    <div class="panel-head reveal"><span class="idx">SECTION 05 · EQUIPMENT</span><h2>装备</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-equipment"></div>
+  </section>
+
+  <section class="panel" id="production">
+    <div class="panel-head reveal"><span class="idx">SECTION 06 · PRODUCTION</span><h2>制作进度</h2><div class="rule"></div></div>
+    <div class="cards reveal" id="cards-production"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="ft-title">致：黯淡星</div>
+  <div class="ft-line">因为爱不是等待，是翻越。</div>
+  <div class="ft-meta" id="footMeta">设定档案 v1.27 · 世界观设定完善中</div>
+  <div class="ft-actions">
+    <button id="btnExport">导出 data.js</button>
+    <button id="btnReset">清除本地修改</button>
+  </div>
+  <div id="ftDirty"></div>
+</footer>
+
+<!-- 详情模态 -->
+<div class="modal-mask" id="modalMask">
+  <div class="modal" id="modal">
+    <button class="m-close" id="mClose">✕</button>
+    <button class="m-edit" id="mEdit">✎ 编辑</button>
+    <div class="m-head">
+      <div class="m-idx" id="mIdx"></div>
+      <h3 id="mName"></h3>
+      <div class="m-tag" id="mTag"></div>
+    </div>
+    <div class="m-body">
+      <div class="m-img" id="mImg"></div>
+      <div class="m-fields" id="mFields"></div>
+    </div>
+    <div class="m-editform" id="mEditForm"></div>
+  </div>
+</div>
+
+<!-- 数据源（发布时 v= 版本号 +1 防缓存） -->
+<script src="data/data.js?v=28"></script>
+<script>
+"use strict";
+/* ============================================================
+   《致：黯淡星》设定站 v1 —— 星图档案
+   数据源：window.ZDAX_DATA（data/data.js）
+   本地修改：localStorage["zdax-overrides"] 覆盖 → 可导出 data.js
+   ============================================================ */
+
+/* ---------- 数据层 ---------- */
+const RAW = window.ZDAX_DATA;
+const OV_KEY = "zdax-overrides";
+const ov = () => { try{ return JSON.parse(localStorage.getItem(OV_KEY)||"{}") }catch(e){ return {} } };
+const ovSave = o => localStorage.setItem(OV_KEY, JSON.stringify(o));
+function secData(section){
+  const base = RAW[section];
+  const o = ov()[section] || {};
+  if(Array.isArray(base)) return base.map(x => Object.assign({}, x, o[x.id]||{}));
+  return Object.assign({}, base, o[base.id]||{});
+}
+function saveEntity(section, entity){
+  const o = ov(); o[section] = o[section] || {}; o[section][entity.id] = entity; ovSave(o);
+  refreshAll();
+}
+function isDirty(){ return !!localStorage.getItem(OV_KEY) }
+
+/* ---------- 字段定义（详情 + 编辑共用） ---------- */
+const FIELD_DEFS = {
+  character: [["age","年龄"],["role","身份"],["appearance","外貌",1],["personality","性格",1],["story","背景故事",2],["lines","名台词",2],["equipment","装备",1],["note","备注",1]],
+  planet:    [["coords","宇宙坐标"],["diameter","直径 (km)"],["temp_avg","平均气温 (K)"],["temp_day","白日 (K)"],["temp_night","夜晚 (K)"],["gravity","重力",1],["surface","地表构成",1],["atmosphere","大气成分",2],["magnet","磁场",1],["terrain","地形地貌",1],["note","世界观备注",2]],
+  region:    [["reg_type","类型"],["epoch","历元"],["ra","赤经"],["dec","赤纬"],["constellation","星座方向"],["dist_ly","距离"],["size_deg","角直径"],["radius_ly","半径"],["appmag_v","视星等"],["absmag_v","绝对星等"],["core","核心天体",1],["members","成员天体",1],["time_dilation","时间膨胀",1],["danger","危险等级"],["names","别名"],["note","备注",2]],
+  building:  [["location","位置"],["material","材料",1],["appearance","外观",1],["signs","标语",1],["size","尺寸结构",2],["levels","楼层布局",2],["function","功能"],["energy","能源",1],["summary_ext","外部形象（长文）",2],["summary_int","内部空间（长文）",2],["note","备注",2]],
+  tianshu:   [["class","定位"],["timeline","时间线",2],["appearance","外观",1],["principle","原理",2],["ability","能力",1],["voice","声音"],["laws","核心法则",2],["hidden_directive","-1 隐藏指令",2],["awakening","觉醒轨迹",2],["structure","结构层次",2],["forms","形态"],["note","备注",2]],
+  equipment: [["type","类型"],["purpose","用途",1],["appearance","外观",1],["specs","规格"],["note","备注",1]],
+  production:[["status","状态"],["note","说明",1]]
+};
+const SEC_LABEL = {characters:"角色",planets:"星球",buildings:"建筑",tianshu:"天枢",equipment:"装备",production:"制作"};
+const SEC_IDX   = {characters:"CH",buildings:"BD",tianshu:"TS",equipment:"EQ",production:"PR"};
+
+/* 行星 → 星图坐标 / 纹理类型 / 短注 / 恒星说明（按设定硬编码布局） */
+const SYS_MAP = {
+  yinghuo:  {x:110,y:114, tex:"rocky", short:"研究院所在 · 主舞台", star:"太阳 · 太阳系", starCss:"radial-gradient(circle at 38% 34%, #fff7d8, #ffd86a 45%, #c98a2a 100%)", starGlow:"0 0 22px rgba(255,216,106,.8),0 0 60px rgba(255,216,106,.35)", starW:26, starH:26, orbitW:130, orbitH:130, period:26, size:44},
+  shuijing: {x:760,y:182, tex:"crystal", short:"瑶光星系 · 第三行星", star:"瑶光 · K 型橙矮星", starCss:"radial-gradient(circle at 38% 34%, #ffe6c8, #ffb066 50%, #b06a2a 100%)", starGlow:"0 0 16px rgba(255,176,102,.75),0 0 46px rgba(255,176,102,.3)", starW:20, starH:20, orbitW:118, orbitH:118, period:20, size:40},
+  shuangri: {x:790,y:471, tex:"desert", short:"赭缥双星 · 偏心轨道", star:"赭（K 冷星）· 缥（B 热星）", starCss:null, starGlow:null, starW:18, starH:18, orbitW:132, orbitH:132, period:30, size:42, dual:true},
+  jiguang:  {x:210,y:479, tex:"ocean", short:"天璇星系 · 第二行星", star:"天璇 · G 型类太阳", starCss:"radial-gradient(circle at 38% 34%, #fff8e0, #ffe08a 48%, #c08028 100%)", starGlow:"0 0 20px rgba(255,224,138,.8),0 0 54px rgba(255,224,138,.32)", starW:22, starH:22, orbitW:112, orbitH:112, period:18, size:38},
+  fengbao:  {x:240,y:198, tex:"volcanic", short:"渊的第三卫星 · 潮汐锁定", star:"渊 · 气态巨行星（玉衡星系）", starCss:"radial-gradient(circle at 36% 32%, #ffb890, #d85a32 55%, #6a1a10 100%)", starGlow:"0 0 28px rgba(216,90,50,.7),0 0 70px rgba(216,90,50,.3)", starW:46, starH:46, orbitW:100, orbitH:100, period:12, size:34}
+};
+const PAL_GLOW = id => (SYS_MAP[id] ? SYS_MAP[id] : null);
+
+/* ---------- 工具 ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function trunc(s,n){ s = String(s||"").replace(/\n+/g," "); return s.length>n ? s.slice(0,n)+"…" : s; }
+function hex2rgb(h){h=(h||"#888888").replace("#","");return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
+function mix(a,b,t){return a.map((v,i)=>Math.round(v+(b[i]-v)*t))}
+function css(c){return `rgb(${c[0]},${c[1]},${c[2]})`}
+
+/* ---------- 行星程序化纹理 ---------- */
+const texCache = {};
+function planetTex(p){
+  if(p.img) return p.img;
+  if(texCache[p.id]) return texCache[p.id];
+  const t = (PAL_GLOW[p.id]||{}).tex || "rocky";
+  const [c1,c2,c3] = (p.palette||["#888","#555","#aaa"]).map(hex2rgb);
+  const cv = document.createElement("canvas"); cv.width = cv.height = 160;
+  const g = cv.getContext("2d");
+  const grad = g.createRadialGradient(56,52,8, 80,80,86);
+  grad.addColorStop(0, css(mix(c3,[255,255,255],0.45)));
+  grad.addColorStop(0.42, css(c1));
+  grad.addColorStop(1, css(mix(c2,[0,0,0],0.25)));
+  g.fillStyle = grad; g.fillRect(0,0,160,160);
+  g.globalAlpha = 0.5;
+  const R = () => Math.random();
+  if(t==="rocky"){
+    for(let i=0;i<90;i++){ const x=R()*160,y=R()*160,r=3+R()*14;
+      g.fillStyle = css(mix(c1, R()<0.5?c2:c3, 0.3+R()*0.7)); g.globalAlpha = 0.12+R()*0.3;
+      g.beginPath();g.arc(x,y,r,0,7);g.fill(); }
+    for(let i=0;i<10;i++){ g.globalAlpha=0.16;g.strokeStyle=css(c2);g.lineWidth=1+R();
+      g.beginPath();g.moveTo(R()*160,R()*160); g.quadraticCurveTo(R()*160,R()*160,R()*160,R()*160);g.stroke(); }
+  } else if(t==="crystal"){
+    for(let i=0;i<26;i++){ const cx=R()*160, cy=R()*160;
+      g.fillStyle = css(mix(c3,[255,255,255],R()*0.7)); g.globalAlpha = 0.14+R()*0.22;
+      g.beginPath();
+      for(let k=0;k<3;k++){ const a=k/3*Math.PI*2+R()*0.8, rr=6+R()*18;
+        const px=cx+Math.cos(a)*rr, py=cy+Math.sin(a)*rr; k?g.lineTo(px,py):g.moveTo(px,py); }
+      g.closePath();g.fill(); }
+  } else if(t==="desert"){
+    for(let i=0;i<30;i++){ const y=R()*160;
+      g.strokeStyle = css(mix(c3,c2,R()*0.8)); g.globalAlpha=0.10+R()*0.2; g.lineWidth=1+R()*2.4;
+      g.beginPath(); g.moveTo(0,y);
+      for(let x=20;x<=160;x+=20){ g.lineTo(x, y+Math.sin(x*0.16+i)*5); } g.stroke(); }
+  } else if(t==="ocean"){
+    for(let i=0;i<24;i++){ const y=R()*160;
+      const gr = g.createLinearGradient(0,y,160,y);
+      const col = R()<0.5?[95,220,201]:[150,110,220];
+      gr.addColorStop(0,`rgba(${col},0)`);gr.addColorStop(0.5,`rgba(${col},${0.16+R()*0.2})`);gr.addColorStop(1,`rgba(${col},0)`);
+      g.fillStyle=gr;g.globalAlpha=0.8;g.fillRect(0,y-2-R()*5,160,3+R()*8); }
+  } else if(t==="volcanic"){
+    for(let i=0;i<40;i++){ const x=R()*160,y=R()*160,r=2+R()*9;
+      g.fillStyle = css(mix(c1, R()<0.3?[255,220,120]:c2, R()*0.8)); g.globalAlpha = 0.14+R()*0.3;
+      g.beginPath();g.arc(x,y,r,0,7);g.fill(); }
+  } else if(t==="giant"){
+    for(let i=0;i<14;i++){ const y=R()*160, h=2+R()*9;
+      g.fillStyle = css(mix(c1, R()<0.5?c2:[255,240,200], R()*0.75)); g.globalAlpha=0.1+R()*0.22;g.fillRect(0,y,160,h); }
+  }
+  g.globalAlpha=1;
+  const edge = g.createRadialGradient(80,80,70, 80,80,86);
+  edge.addColorStop(0,"rgba(0,0,0,0)");edge.addColorStop(1,"rgba(0,0,0,0.42)");
+  g.fillStyle=edge;g.fillRect(0,0,160,160);
+  texCache[p.id] = cv.toDataURL();
+  return texCache[p.id];
+}
+
+/* ---------- 星空粒子背景 ---------- */
+(function(){
+  const cv = document.getElementById("space"), g = cv.getContext("2d");
+  let W,H,stars=[],meteors=[],raf;
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function resize(){
+    W = cv.width = innerWidth; H = cv.height = innerHeight;
+    stars = [];
+    const n = Math.min(340, Math.floor(W*H/4200));
+    for(let i=0;i<n;i++){
+      stars.push({x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.3+0.2,
+        a:Math.random()*0.7+0.15, tw:Math.random()*Math.PI*2, sp:Math.random()*0.16+0.02});
+    }
+    if(reduced) draw();
+  }
+  function draw(){
+    g.clearRect(0,0,W,H);
+    for(const s of stars){
+      const tw = reduced ? 1 : 0.72 + 0.28*Math.sin(s.tw + performance.now()/1400);
+      g.globalAlpha = s.a*tw;
+      g.fillStyle = "#e8e6dc";
+      g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();
+    }
+    for(const m of meteors){
+      g.globalAlpha = m.life;
+      const grad = g.createLinearGradient(m.x,m.y,m.x-m.vx*14,m.y-m.vy*14);
+      grad.addColorStop(0,"#fff");grad.addColorStop(1,"rgba(255,255,255,0)");
+      g.strokeStyle = grad;g.lineWidth = 1.2;
+      g.beginPath();g.moveTo(m.x,m.y);g.lineTo(m.x-m.vx*14,m.y-m.vy*14);g.stroke();
+    }
+    g.globalAlpha = 1;
+  }
+  function step(){
+    for(const s of stars){ s.y += s.sp; s.x -= s.sp*0.25; if(s.y>H+2){s.y=-2;s.x=Math.random()*W} if(s.x<-2){s.x=W+2} }
+    if(Math.random()<0.004 && meteors.length<2){
+      meteors.push({x:Math.random()*W*0.8+W*0.1, y:Math.random()*H*0.3, vx:-(3+Math.random()*3), vy:(2.2+Math.random()*2), life:1});
+    }
+    for(const m of meteors){ m.x+=m.vx; m.y+=m.vy; m.life-=0.016; }
+    meteors = meteors.filter(m=>m.life>0);
+    draw();
+    raf = requestAnimationFrame(step);
+  }
+  resize();
+  addEventListener("resize",resize);
+  if(!reduced) raf = requestAnimationFrame(step);
+})();
+
+/* ---------- 星图：恒星系统节点 ---------- */
+function renderStarmap(){
+  const mount = document.getElementById("sysMount");
+  mount.innerHTML = "";
+  const planets = secData("planets");
+  const routePts = {};
+  for(const p of planets){
+    const m = SYS_MAP[p.id];
+    if(!m) continue;
+    routePts[p.id] = [m.x, m.y];
+    const sys = document.createElement("div");
+    sys.className = "sys";
+    sys.style.left = m.x/10 + "%";
+    sys.style.top  = m.y/7.6 + "%";
+    let starHtml = "";
+    if(m.dual){
+      starHtml = `
+        <div class="sys-star" style="width:${m.starW}px;height:${m.starH}px;left:calc(50% - 12px);background:radial-gradient(circle at 38% 34%, #ffd0b0, #e07840 55%, #8a3018 100%);box-shadow:0 0 15px rgba(224,120,64,.75),0 0 44px rgba(224,120,64,.3)"></div>
+        <div class="sys-star" style="width:${m.starW}px;height:${m.starH}px;left:calc(50% + 12px);background:radial-gradient(circle at 38% 34%, #d8e8ff, #6f9fd8 55%, #284878 100%);box-shadow:0 0 18px rgba(111,159,216,.8),0 0 50px rgba(111,159,216,.35)"></div>`;
+    } else {
+      starHtml = `<div class="sys-star" style="width:${m.starW}px;height:${m.starH}px;background:${m.starCss};box-shadow:${m.starGlow}"></div>`;
+    }
+    const glow = `rgba(${hex2rgb((p.palette||["#888"])[0]).join(",")},.3)`;
+    sys.innerHTML = `
+      ${starHtml}
+      <div class="sys-star-lbl">${m.star}</div>
+      <div class="orbit" style="width:${m.orbitW}px;height:${m.orbitH}px">
+        <div class="planet-wrap" style="--period:${m.period}s">
+          <div class="planet" data-id="${p.id}" style="--glow:${glow}">
+            <img src="${planetTex(p)}" width="${m.size}" height="${m.size}" alt="${esc(p.name)}">
+            <div class="glow"></div>
+            <div class="name">${esc(p.name)}<small>${esc(m.short)}</small></div>
+          </div>
+        </div>
+      </div>`;
+    mount.appendChild(sys);
+  }
+  // 探索路线
+  const order = ["yinghuo","shuijing","shuangri","jiguang","fengbao"];
+  const path = document.getElementById("routePath");
+  path.setAttribute("d", order.map((id,i)=> (i?"L":"M")+routePts[id][0]+","+routePts[id][1]).join(" ") + " L500,380");
+  const a=routePts.yinghuo, b=routePts.shuijing;
+  document.getElementById("routeLbl1").setAttribute("x", (a[0]+b[0])/2-52);
+  document.getElementById("routeLbl1").setAttribute("y", (a[1]+b[1])/2-10);
+  document.getElementById("routeLbl2").setAttribute("x", (a[0]+b[0])/2+8);
+  document.getElementById("routeLbl2").setAttribute("y", (a[1]+b[1])/2+12);
+  // 绑定点击
+  mount.querySelectorAll(".planet").forEach(el=>{
+    el.addEventListener("click",()=>openDetail("planets", el.dataset.id));
+  });
+}
+
+/* ---------- 风扰星域档案条 ---------- */
+function renderRegionCard(){
+  const regions = secData("planets").filter(p=>p.kind==="region");
+  const r = regions[0];
+  const el = document.getElementById("regionCard");
+  if(!r){ el.style.display="none"; return; }
+  el.style.display="";
+  el.innerHTML = `
+    <h3>${esc(r.name)}</h3>
+    <div class="rc-sub">${esc(r.tag)}</div>
+    <div class="rc-grid">
+      <div class="rc-item"><span class="k">核心天体</span><span class="v">${esc(r.core||"")}</span></div>
+      <div class="rc-item"><span class="k">成员星系</span><span class="v">${esc(r.members||"")}</span></div>
+      <div class="rc-item"><span class="k">时间膨胀</span><span class="v">${esc(r.time_dilation||"")}</span></div>
+      <div class="rc-item"><span class="k">危险等级</span><span class="v rc-danger">${esc(r.danger||"")}</span></div>
+    </div>`;
+  el.addEventListener("click", ()=>openDetail("planets", r.id));
+}
+
+/* ---------- 移动端行星列表 ---------- */
+function renderPlanetList(){
+  const wrap = document.getElementById("planetList");
+  wrap.innerHTML = "";
+  const planets = secData("planets");
+  for(const p of planets){
+    const glow = `rgba(${hex2rgb((p.palette||["#888"])[0]).join(",")},.25)`;
+    const it = document.createElement("div");
+    it.className = "pl-item";
+    it.style.setProperty("--glow", glow);
+    it.innerHTML = `<img src="${planetTex(p)}" alt="${esc(p.name)}"><div class="n">${esc(p.name)}</div>`;
+    it.addEventListener("click", ()=>openDetail("planets", p.id));
+    wrap.appendChild(it);
+  }
+}
+
+/* ---------- 卡片 ---------- */
+const CARD_DESC = {
+  characters: p => trunc(p.story,120),
+  buildings:  p => trunc(p.summary_ext,120),
+  tianshu:    p => trunc(p.note,160),
+  equipment:  p => trunc(p.purpose,110),
+  production: p => trunc(p.note,110)
+};
+const CARD_TAG = {
+  characters: p => p.tag, buildings: p => p.tag, tianshu: p => "星球级中央 AI · 北斗序列之首",
+  equipment: p => p.type, production: p => p.status
+};
+const CARD_TITLE = {
+  characters: p => p.name, buildings: p => p.name, tianshu: p => p.name,
+  equipment: p => p.name, production: p => p.title
+};
+function renderCards(){
+  const secs = {characters:"cards-characters",buildings:"cards-buildings",tianshu:"cards-tianshu",equipment:"cards-equipment",production:"cards-production"};
+  for(const [section, wrapId] of Object.entries(secs)){
+    const wrap = document.getElementById(wrapId);
+    wrap.innerHTML = "";
+    const data = secData(section);
+    const list = Array.isArray(data) ? data : [data];
+    list.forEach((p,i)=>{
+      const el = document.createElement("div");
+      el.className = "card" + (section==="tianshu" ? " tianshu-card" : "");
+      const imgHtml = p.img
+        ? `<img src="${p.img}" alt="${esc(p.name||p.title)}">`
+        : `<span class="ph">图片位 · 待上传</span>`;
+      el.innerHTML = `
+        <div class="img-slot">${imgHtml}</div>
+        <div class="body"><h4>${esc(CARD_TITLE[section](p))}</h4><div class="tag">${esc(CARD_TAG[section](p))}</div><p>${esc(CARD_DESC[section](p))}</p></div>
+        <span class="corner">${SEC_IDX[section]||""}-${String(i+1).padStart(2,"0")}</span>`;
+      el.addEventListener("click", ()=>openDetail(section, p.id));
+      wrap.appendChild(el);
+    });
+  }
+}
+
+/* ---------- 详情模态 ---------- */
+const mask = document.getElementById("modalMask"), modal = document.getElementById("modal");
+let curSection = null, curId = null;
+function openDetail(section, id){
+  curSection = section; curId = id;
+  const data = secData(section);
+  const list = Array.isArray(data) ? data : [data];
+  const d = list.find(x=>x.id===id);
+  if(!d) return;
+  modal.classList.remove("edit-mode");
+  document.getElementById("mIdx").textContent = SEC_LABEL[section] + " · " + (d.kind==="region" ? "星域档案 ZDR-1" : "档案");
+  document.getElementById("mName").textContent = d.name || d.title || "";
+  document.getElementById("mTag").textContent = d.tag || "";
+  // 字段
+  const defs = d.kind==="region" ? FIELD_DEFS.region : (FIELD_DEFS[section] || []);
+  const f = document.getElementById("mFields");
+  f.innerHTML = defs.map(([k,lbl])=>{
+    const v = d[k];
+    if(v===undefined || v===null || v==="") return "";
+    const isLong = v.length > 260;
+    return `<div class="row"><span class="k">${lbl}</span><span class="v ${isLong?"sub":""}">${esc(v)}</span></div>`;
+  }).join("") || `<div class="row"><span class="v sub">（暂无详细档案）</span></div>`;
+  // 图片区
+  renderModalImg(d);
+  mask.classList.add("open");
+}
+function renderModalImg(d){
+  const mi = document.getElementById("mImg");
+  if(d.img){
+    mi.innerHTML = `<img src="${d.img}" alt=""><div class="up-hint"><span class="ic">🖼</span>点击更换图片</div><input type="file" id="mFile" accept="image/*"><button class="rm-btn" id="mRm">移除图片</button>`;
+    mi.classList.add("has");
+  } else {
+    mi.innerHTML = `<div class="up-hint"><span class="ic">▢</span>概念图待上传<br>点击选择图片（存本机）</div><input type="file" id="mFile" accept="image/*"><button class="rm-btn" id="mRm">移除图片</button>`;
+    mi.classList.remove("has");
+  }
+  document.getElementById("mFile").addEventListener("change", e=>{
+    const file = e.target.files[0]; if(!file) return;
+    compressImage(file, dataUrl=>{
+      const data = secData(curSection);
+      const list = Array.isArray(data) ? data : [data];
+      const ent = list.find(x=>x.id===curId);
+      if(ent){ ent.img = dataUrl; saveEntity(curSection, ent); }
+    });
+  });
+  document.getElementById("mRm").addEventListener("click", ()=>{
+    const data = secData(curSection);
+    const list = Array.isArray(data) ? data : [data];
+    const ent = list.find(x=>x.id===curId);
+    if(ent){ ent.img = ""; saveEntity(curSection, ent); }
+  });
+}
+function compressImage(file, cb){
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = ()=>{
+    const scale = Math.min(1, 1400/Math.max(img.width,img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.max(1,Math.round(img.width*scale));
+    c.height = Math.max(1,Math.round(img.height*scale));
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(url);
+    cb(c.toDataURL("image/jpeg",0.86));
+  };
+  img.src = url;
+}
+function closeDetail(){ mask.classList.remove("open"); }
+document.getElementById("mClose").addEventListener("click", closeDetail);
+mask.addEventListener("click", e=>{ if(e.target===mask) closeDetail(); });
+addEventListener("keydown", e=>{ if(e.key==="Escape") closeDetail(); });
+document.getElementById("core").addEventListener("click", ()=>{
+  const r = secData("planets").find(p=>p.kind==="region");
+  if(r) openDetail("planets", r.id);
+});
+
+/* ---------- 编辑模式 ---------- */
+const mEdit = document.getElementById("mEdit");
+mEdit.addEventListener("click", ()=>{
+  const data = secData(curSection);
+  const list = Array.isArray(data) ? data : [data];
+  const d = list.find(x=>x.id===curId);
+  if(!d) return;
+  const defs = d.kind==="region" ? FIELD_DEFS.region : (FIELD_DEFS[curSection]||[]);
+  const ef = document.getElementById("mEditForm");
+  ef.innerHTML = defs.map(([k,lbl,rows])=>{
+    const v = d[k]===undefined ? "" : String(d[k]);
+    const ctrl = rows
+      ? `<textarea name="${k}" rows="${rows*4+2}">${esc(v)}</textarea>`
+      : `<input name="${k}" value="${esc(v)}">`;
+    return `<label><span class="k">${lbl}</span>${ctrl}</label>`;
+  }).join("") + `<div class="ef-actions"><button id="efSave">保存修改</button><button class="ghost" id="efCancel">取消</button></div>`;
+  document.getElementById("efSave").addEventListener("click", ()=>{
+    const ent = Object.assign({}, d);
+    defs.forEach(([k])=>{
+      const ctrl = ef.querySelector(`[name="${k}"]`);
+      if(ctrl) ent[k] = ctrl.value;
+    });
+    saveEntity(curSection, ent);
+    modal.classList.remove("edit-mode");
+  });
+  document.getElementById("efCancel").addEventListener("click", ()=> modal.classList.remove("edit-mode"));
+  modal.classList.add("edit-mode");
+});
+
+/* ---------- 全量刷新 ---------- */
+function refreshAll(){
+  renderStarmap();
+  renderRegionCard();
+  renderPlanetList();
+  renderCards();
+  document.getElementById("ftDirty").textContent = isDirty() ? "● 存在本地修改（未导出）" : "";
+}
+
+/* ---------- 导出 / 重置 ---------- */
+document.getElementById("btnExport").addEventListener("click", ()=>{
+  const out = JSON.parse(JSON.stringify(RAW));
+  const o = ov();
+  for(const [section, items] of Object.entries(o)){
+    if(Array.isArray(out[section])){
+      const map = {};
+      out[section].forEach(x=>map[x.id]=x);
+      for(const [id, ent] of Object.entries(items)) map[id] = Object.assign({}, map[id], ent);
+      out[section] = Object.values(map);
+    } else {
+      out[section] = Object.assign({}, out[section], items);
+    }
+  }
+  out.meta.updated = new Date().toISOString().slice(0,10);
+  const js = "/* 《致：黯淡星》设定数据 —— 由设定站导出/更新 */\nwindow.ZDAX_DATA = " + JSON.stringify(out, null, 2) + ";\n";
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([js], {type:"text/javascript"}));
+  a.download = "data.js";
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+});
+document.getElementById("btnReset").addEventListener("click", ()=>{
+  if(confirm("清除所有本地修改（含上传的图片）？")){
+    localStorage.removeItem(OV_KEY);
+    refreshAll();
+    closeDetail();
+  }
+});
+
+/* ---------- 封面 meta ---------- */
+(function(){
+  const m = RAW.meta || {};
+  if(m.tagline) document.getElementById("heroTagline").textContent = m.tagline;
+  if(m.sub) document.getElementById("heroSub").textContent = m.sub;
+  document.getElementById("footMeta").textContent = `设定档案 ${m.version||""} · ${m.updated||""} · ${m.status||""}`;
+  document.title = m.title || document.title;
+})();
+
+/* ---------- 滚动交互 ---------- */
+const nav = document.getElementById("nav");
+const hero = document.getElementById("hero");
+addEventListener("scroll", ()=>{
+  nav.classList.toggle("show", scrollY > hero.offsetHeight*0.55);
+},{passive:true});
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
+},{threshold:0.16});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+const links = [...document.querySelectorAll("#nav a[data-nav]")];
+const secIO = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ links.forEach(l=>l.classList.toggle("active", l.dataset.nav===e.target.id)); } });
+},{rootMargin:"-42% 0px -52% 0px"});
+["galaxy","characters","buildings","tianshu","equipment","production"].forEach(id=>{
+  const el = document.getElementById(id); if(el) secIO.observe(el);
+});
+
+/* ---------- 启动 ---------- */
+refreshAll();
+</script>
+</body>
+</html>
